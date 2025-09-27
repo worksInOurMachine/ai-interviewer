@@ -18,11 +18,6 @@ export const authOptions: NextAuthOptions = {
             identifier: credentials?.identifier,
             password: credentials?.password,
           })) as any;
-          console.log(
-            user,
-            jwt,
-            "____________________________________________"
-          );
           if (jwt && user) {
             return {
               id: String(user.id),
