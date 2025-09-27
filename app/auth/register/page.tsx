@@ -1,14 +1,9 @@
 "use client";
-import React from "react";
-import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/ac-input";
 import { Label } from "@/components/ui/ac-label";
-import {
-  IconBrandGithub,
-  IconBrandGoogle,
-  IconBrandOnlyfans,
-} from "@tabler/icons-react";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
+import React from "react";
 
 export default function SignupFormDemo() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -27,8 +22,8 @@ export default function SignupFormDemo() {
       <form className="my-8" onSubmit={handleSubmit}>
         <div className="mb-4 flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2">
           <LabelInputContainer>
-            <Label htmlFor="lastname">full name</Label>
-            <Input id="lastname" placeholder="Durden" type="text" />
+            <Label htmlFor="fullname">Full Name</Label>
+            <Input id="fullname" placeholder="Tony" type="text" />
           </LabelInputContainer>
         </div>
         <LabelInputContainer className="mb-4">

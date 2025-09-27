@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import React, { useState, useEffect } from "react";
 // The import for 'next/link' has been removed to resolve the compilation error.
 // Standard <a> tags are used for navigation instead.
@@ -103,7 +104,7 @@ const Navbar = () => {
     >
       <div className="flex items-center justify-between rounded-xl border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900/80 px-4 py-2 shadow-xl backdrop-blur-md sm:px-6 sm:py-3 transition-colors duration-300">
         {/* Logo Section - Now using standard <a> tag */}
-        <a
+        <Link
           href="/"
           className="flex items-center gap-2 text-gray-900 dark:text-white"
         >
@@ -114,28 +115,28 @@ const Navbar = () => {
             <div className="w-2 h-2 rounded-full bg-white/100 opacity-30"></div>
           </div>
           <span className="text-sm font-bold">AI Interviewer</span>
-        </a>
+        </Link>
 
         {/* Main Navigation Links (Desktop only) - Now using standard <a> tag */}
         <div className="hidden items-center gap-8 md:flex">
-          <a
+          <Link
             href="/"
             className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
           >
             Home
-          </a>
-          <a
+          </Link>
+          <Link
             href="/#models"
             className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
           >
             Modes
-          </a>
-          <a
+          </Link>
+          <Link
             href="/create-interview"
             className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
           >
             Practice
-          </a>
+          </Link>
         </div>
 
         {/* Auth Buttons and Theme Toggle (Visible on all devices) */}
@@ -143,20 +144,20 @@ const Navbar = () => {
           <ThemeToggle />
 
           {/* Login Button (Subtle/Outline style) - Now using standard <a> tag */}
-          <a
+          <Link
             href="/auth/login"
             className="rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-800 dark:text-white border border-gray-300 dark:border-gray-700 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 sm:px-4 sm:py-2"
           >
             Login
-          </a>
+          </Link>
 
           {/* Sign Up Button (Primary CTA style) - Now using standard <a> tag */}
-          <a
+          <Link
             href="/auth/register"
             className="rounded-lg bg-white/100  px-3 py-1.5 text-xs font-semibold text-black shadow-sm hover:bg-white/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/55 sm:px-4 sm:py-2"
           >
             Sign Up
-          </a>
+          </Link>
         </div>
       </div>
     </nav>

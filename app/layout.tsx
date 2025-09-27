@@ -7,6 +7,9 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Suspense } from "react";
 import Navbar from "@/components/navbar";
+import AuthProvider from "@/components/provider/next-auth-provider";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/auth";
 
 export const metadata: Metadata = {
   title: "AI Interviewer - Master Your Next Interview",
@@ -15,11 +18,12 @@ export const metadata: Metadata = {
   generator: "v0.app",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getServerSession(authOptions);
   return (
     <html
       lang="en"
@@ -27,14 +31,16 @@ export default function RootLayout({
       suppressHydrationWarning={true}
     >
       <body className="font-sans">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <Suspense>
-            <Navbar />
-            <div className="h-30" aria-hidden />
-            {children}
-            <Analytics />
-          </Suspense>
-        </ThemeProvider>
+        <AuthProvider session={session}>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <Suspense>
+              <Navbar />
+              <div className="h-30" aria-hidden />
+              {children}
+              <Analytics />
+            </Suspense>
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );
