@@ -109,9 +109,9 @@ const Navbar = () => {
         >
           <div className="flex items-center gap-1">
             {/* Using standard Tailwind indigo colors */}
-            <div className="w-2 h-2 rounded-full bg-indigo-500"></div>
-            <div className="w-2 h-2 rounded-full bg-indigo-500 opacity-60"></div>
-            <div className="w-2 h-2 rounded-full bg-indigo-500 opacity-30"></div>
+            <div className="w-2 h-2 rounded-full bg-white/100"></div>
+            <div className="w-2 h-2 rounded-full bg-white/100 opacity-60"></div>
+            <div className="w-2 h-2 rounded-full bg-white/100 opacity-30"></div>
           </div>
           <span className="text-sm font-bold">AI Interviewer</span>
         </a>
@@ -153,7 +153,7 @@ const Navbar = () => {
           {/* Sign Up Button (Primary CTA style) - Now using standard <a> tag */}
           <a
             href="/auth/register"
-            className="rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-indigo-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 sm:px-4 sm:py-2"
+            className="rounded-lg bg-white/100  px-3 py-1.5 text-xs font-semibold text-black shadow-sm hover:bg-white/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/55 sm:px-4 sm:py-2"
           >
             Sign Up
           </a>
