@@ -146,7 +146,7 @@ const Navbar = () => {
         <div className="flex items-center gap-2 sm:gap-3">
           <ThemeToggle />
           {
-            session.user.id ? <>
+            session?.user?.id ? <>
               <Link
                 href="/create-interview"
                 className="rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-800 dark:text-white border border-gray-300 dark:border-gray-700 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 sm:px-4 sm:py-2"
