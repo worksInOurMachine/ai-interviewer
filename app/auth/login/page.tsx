@@ -9,37 +9,38 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 
 export default function SignupFormDemo() {
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      setLoading(true)
+      setLoading(true);
       console.log({
         identifier: e.currentTarget.email.value,
-        password: e.currentTarget.password.value
-      })
+        password: e.currentTarget.password.value,
+      });
       const res = await signIn("credentials", {
         redirect: false,
         identifier: e.currentTarget.email.value,
-        password: e.currentTarget.password.value
+        password: e.currentTarget.password.value,
       });
-      console.log(res, "res______________--")
+      console.log(res, "res______________--");
       if (res?.ok) {
         toast.success("Login successful");
-        const redirectRoute = JSON.parse(localStorage.getItem("redirectRoute")!)! || "/";
+        const redirectRoute =
+          JSON.parse(localStorage.getItem("redirectRoute")!)! || "/";
         localStorage.removeItem("redirectRoute");
         window.location.href = redirectRoute;
       } else {
         toast.error("Invalid Password");
       }
     } catch (error) {
-      console.log("Login Error", error)
+      console.log("Login Error", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
   return (
-    <div className="shadow-input mx-auto w-full max-w-md rounded-none bg-white p-4 md:rounded-2xl md:p-8 dark:bg-black">
+    <div className="shadow-input mt-10 mx-auto w-full max-w-md rounded-none bg-white p-4 md:rounded-2xl md:p-8 dark:bg-black">
       <h2 className="text-xl font-bold text-neutral-800 dark:text-neutral-200">
         Welcome to AI Interviewer!
       </h2>
@@ -47,23 +48,37 @@ export default function SignupFormDemo() {
       <form className="my-8" onSubmit={handleSubmit}>
         <LabelInputContainer className="mb-4">
           <Label htmlFor="email">Email Address</Label>
-          <Input id="email" placeholder="projectmayhem@fc.com" type="email" required />
+          <Input
+            id="email"
+            placeholder="projectmayhem@fc.com"
+            type="email"
+            required
+          />
         </LabelInputContainer>
         <LabelInputContainer className="mb-4">
           <Label htmlFor="password">Password</Label>
-          <Input id="password" placeholder="••••••••" type="password" required />
+          <Input
+            id="password"
+            placeholder="••••••••"
+            type="password"
+            required
+          />
         </LabelInputContainer>
         <button
           className="group/btn relative cursor-pointer block h-10 w-full rounded-md bg-gradient-to-br from-black to-neutral-600 font-medium text-white shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:bg-zinc-800 dark:from-zinc-900 dark:to-zinc-900 dark:shadow-[0px_1px_0px_0px_#27272a_inset,0px_-1px_0px_0px_#27272a_inset]"
           type="submit"
           disabled={loading}
         >
-          {
-            loading ? <div className=" flex justify-center items-center w-full"><LoaderCircle className=" rotate-180 spin-in animate-spin text-center" /></div> : <>
+          {loading ? (
+            <div className=" flex justify-center items-center w-full">
+              <LoaderCircle className=" rotate-180 spin-in animate-spin text-center" />
+            </div>
+          ) : (
+            <>
               Sign in &rarr;
               <BottomGradient />
             </>
-          }
+          )}
         </button>
         <p className="mt-4 text-center text-sm text-neutral-600 dark:text-neutral-400 text-decoration-underline">
           Already have an account <Link href="/auth/register">click here</Link>
