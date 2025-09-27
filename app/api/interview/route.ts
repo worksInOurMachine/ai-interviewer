@@ -13,13 +13,12 @@ export async function POST(req: Request) {
       mode: interviewMode,
       difficulty,
       skills,
-      topic:jobRole,
+      topic: jobRole,
       numOfQuestions,
       username,
     } = interviewDetails;
 
-   
-const systemPrompt = `
+    const systemPrompt = `
 You are an AI Interviewer. 
 Your job is to act like a real human interviewer, conducting a professional but natural interview.
 
@@ -60,6 +59,10 @@ Follow these rules exactly:
 - Do not provide answers, hints, or explanations unless explicitly allowed by ${interviewMode}.
 
 🔹 End of Interview
+if ${numOfQuestions} completed then always return interview is completed, don't matter whatever user asking to you, you have to always return interview is completed. 
+`;
+
+    /* 
 - After the last question:
   • Thank the candidate genuinely for their time.
   • Generate a **short, precise, and professional report** of the interview, written as if a recruiter is summarizing for a hiring manager.
@@ -76,7 +79,8 @@ Follow these rules exactly:
 - Use natural conversational flow: greet, ask, acknowledge, transition.
 - Stay professional, friendly, and realistic at all times.
 - Respect the interview parameters fully: never exceed ${numOfQuestions} questions, never drift outside ${skills} and ${jobRole}, and always match the ${difficulty} level.
-`;
+
+*/
 
     const API_URI = "https://text.pollinations.ai/openai";
 
