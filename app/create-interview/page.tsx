@@ -2,6 +2,7 @@
 import Stepper, { Step } from "@/components/ui/stepper"; // Stepper components assumed to be available
 import { strapi } from "@/lib/api/sdk";
 import { number } from "framer-motion";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 import React from "react";
@@ -16,6 +17,9 @@ function Page() {
   const [topic, setTopic] = React.useState("");
   const [questions, setQuestions] = React.useState("10");
   const router = useRouter();
+  const { data } = useSession<any>();
+
+  console.log(data);
 
   const handleSubmitFinal = async () => {
     try {
@@ -49,7 +53,7 @@ function Page() {
         skills: skills,
         details: topic,
         numberOfQuestions: parseInt(questions),
-        user: 1,
+        user: data && data.user.id,
       });
       console.log("Interview Created:", res);
       toast.success("interview Created SuccessFully");
