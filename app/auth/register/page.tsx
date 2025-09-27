@@ -9,13 +9,15 @@ import {
   IconBrandOnlyfans,
 } from "@tabler/icons-react";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 export default function SignupFormDemo() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Form submitted", e.currentTarget.email.value);
+    toast.success("Account created successfully!");
   };
-  return (
+  return (  
     <div className="shadow-input mx-auto w-full max-w-md rounded-none bg-white p-4 md:rounded-2xl md:p-8 dark:bg-black">
       <h2 className="text-xl font-bold text-neutral-800 dark:text-neutral-200">
         Welcome to AI Interviewer!

@@ -7,6 +7,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Suspense } from "react";
 import Navbar from "@/components/navbar";
+import ToastProvider from "@/providers/ToastProvider";
 
 export const metadata: Metadata = {
   title: "AI Interviewer - Master Your Next Interview",
@@ -30,6 +31,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <Suspense>
             <Navbar />
+            <ToastProvider />
             <div className="h-30" aria-hidden />
             {children}
             <Analytics />
