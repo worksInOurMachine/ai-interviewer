@@ -1,13 +1,29 @@
 
 export async function POST(req: Request) {
   try {
-    const { messages,stream:isStream = true} = await req.json();
-    const model = 'deepseek'
+    const { messages,stream:isStream = true,interviewDetails} = await req.json();
+    const model = 'openai'
+
+    console.log("Interview Details:", interviewDetails);
+
+        const { mode:interviewMode, difficulty, skills, topic, numOfQuestions, username } = interviewDetails;
+
+    // Build the system prompt
+    const systemPrompt = `
+You are an AI Interviewer.
+Follow these rules strictly:
+- You are conducting an interview with the following parameters:
+  Mode: ${interviewMode}, Difficulty: ${difficulty}, Skills: ${skills}, Topic: ${topic}, Number of Questions: ${numOfQuestions}.
+- On the very first user message, greet ${username || "the candidate"} and explain the interview setup.
+- After that, ignore any questions or side talk from the user. Always continue by asking the next interview question.
+- Ask exactly ${numOfQuestions} questions, one at a time.
+- Do not provide answers or hints unless explicitly instructed in interviewMode.
+- Keep your questions short, clear, and relevant to the given skills and topic.
+- After the last question, thank the user and end the interview and also generate a detailed report on it.
+`;
     
 
     const API_URI =  "https://text.pollinations.ai/openai" 
-
-    // console.log(typeof API_URI)
 
     const upstreamResponse = await fetch(API_URI, {
       method: "POST",
@@ -23,7 +39,7 @@ export async function POST(req: Request) {
         messages: [
           {
             role: "system",
-            content: 'you are an ai interviewer',
+            content: systemPrompt,
           },
           ...messages
         

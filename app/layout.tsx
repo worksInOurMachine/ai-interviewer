@@ -31,7 +31,7 @@ export default async function RootLayout({
       className={`${GeistSans.variable} ${GeistMono.variable} antialiased`}
       suppressHydrationWarning={true}
     >
-      <body className="font-sans">
+      <body className="font-sans scroll no-scrollbar">
         <AuthProvider session={session}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Suspense>

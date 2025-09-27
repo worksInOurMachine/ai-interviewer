@@ -3,6 +3,10 @@
 
 @custom-variant dark (&:is(.dark *));
 
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, and Opera */
+}
+
 :root {
   --background: oklch(0.98 0.005 90);
   --foreground: oklch(0.09 0.02 300);

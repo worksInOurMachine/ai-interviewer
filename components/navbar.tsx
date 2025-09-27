@@ -98,7 +98,6 @@ const ThemeToggle = () => {
 // --- 2. Main Navbar Component (Now fixed with <a> tags) ---
 
 const Navbar = () => {
-
   const { data: session, status } = useSession() as any;
   return (
     <nav
@@ -145,16 +144,17 @@ const Navbar = () => {
         {/* Auth Buttons and Theme Toggle (Visible on all devices) */}
         <div className="flex items-center gap-2 sm:gap-3">
           <ThemeToggle />
-          {
-            session?.user?.id ? <>
+          {session?.user?.id ? (
+            <>
               <Link
                 href="/create-interview"
                 className="rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-800 dark:text-white border border-gray-300 dark:border-gray-700 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 sm:px-4 sm:py-2"
               >
                 Start
               </Link>
-            </> : <>
-
+            </>
+          ) : (
+            <>
               {/* Login Button (Subtle/Outline style) - Now using standard <a> tag */}
               <Link
                 href="/auth/login"
@@ -171,7 +171,7 @@ const Navbar = () => {
                 Sign Up
               </Link>
             </>
-          }
+          )}
         </div>
       </div>
     </nav>
