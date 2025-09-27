@@ -127,7 +127,7 @@ function Page() {
               onChange={(e) => setMode(e.target.value)}
               className={SelectClasses}
             >
-              <option value="Hr">HR / Behavioral</option>
+              <option value="HR">HR / Behavioral</option>
               <option value="Technical">Technical</option>
             </select>
           </div>
