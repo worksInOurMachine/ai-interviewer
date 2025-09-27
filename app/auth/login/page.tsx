@@ -14,26 +14,22 @@ export default function SignupFormDemo() {
     e.preventDefault();
     try {
       setLoading(true)
-      console.log({
-        identifier: e.currentTarget.email.value,
-        password: e.currentTarget.password.value
-      })
       const res = await signIn("credentials", {
         redirect: false,
         identifier: e.currentTarget.email.value,
         password: e.currentTarget.password.value
       });
-      console.log(res, "res______________--")
       if (res?.ok) {
         toast.success("Login successful");
         const redirectRoute = JSON.parse(localStorage.getItem("redirectRoute")!)! || "/";
         localStorage.removeItem("redirectRoute");
         window.location.href = redirectRoute;
       } else {
-        toast.error("Invalid Password");
+        toast.error("Invalid Email or Password");
       }
     } catch (error) {
       console.log("Login Error", error)
+      toast.error("Something went wrong")
     } finally {
       setLoading(false)
     }
