@@ -1,61 +1,166 @@
-"use client"
+"use client";
+import React, { useState, useEffect } from "react";
+// The import for 'next/link' has been removed to resolve the compilation error.
+// Standard <a> tags are used for navigation instead.
 
-import Link from "next/link"
-import { motion } from "framer-motion"
-import ThemeToggle from "@/components/theme-toggle"
+// --- 1. Inline ThemeToggle Component ---
+const ThemeToggle = () => {
+  // FIX: Initialize state with a function that reads localStorage/system prefs immediately.
+  // This runs only once on mount, ensuring the correct theme is applied before the first render.
+  const [theme, setTheme] = useState(() => {
+    if (typeof window !== "undefined" && window.localStorage) {
+      const storedTheme = localStorage.getItem("theme");
+      if (storedTheme) {
+        return storedTheme;
+      }
+      // Only check system preference if no stored theme is found
+      if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        return "dark";
+      }
+    }
+    // Default to 'light' if localStorage/window is unavailable
+    return "light";
+  });
 
-export default function Navbar() {
+  // This single useEffect now handles two jobs:
+  // 1. Applies the initial theme class to the document root (which is the correct theme).
+  // 2. Applies the class whenever the theme is toggled (updates).
+  useEffect(() => {
+    const root = window.document.documentElement;
+    // Apply theme class to the root element (used by Tailwind's dark: selector)
+    if (theme === "dark") {
+      root.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      root.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+  };
+
+  const Icon =
+    theme === "light" ? (
+      // Sun Icon (light mode)
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <circle cx="12" cy="12" r="4" />
+        <path d="M12 2v2" />
+        <path d="M12 20v2" />
+        <path d="M4.93 4.93l1.41 1.41" />
+        <path d="M17.66 17.66l1.41 1.41" />
+        <path d="M2 12h2" />
+        <path d="M20 12h2" />
+        <path d="M6.34 17.66l-1.41 1.41" />
+        <path d="M19.07 4.93l-1.41 1.41" />
+      </svg>
+    ) : (
+      // Moon Icon (dark mode)
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+      </svg>
+    );
+
   return (
-    <motion.nav
-      aria-label="Main navigation"
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35 }}
-      className="pointer-events-none fixed left-1/2 top-4 z-50 w-full max-w-5xl -translate-x-1/2 px-4"
+    <button
+      onClick={toggleTheme}
+      aria-label="Toggle theme"
+      className="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500"
     >
-      <div className="pointer-events-auto flex items-center justify-between rounded-xl border border-border bg-background/80 px-6 py-3 shadow-lg backdrop-blur-md">
-        {" "}
-        {/* Slightly more padding and opacity */}
-        <Link href="/" className="flex items-center gap-2">
+      {Icon}
+    </button>
+  );
+};
+
+// --- 2. Main Navbar Component (Now fixed with <a> tags) ---
+
+const Navbar = () => {
+  return (
+    <nav
+      aria-label="Main navigation"
+      className="fixed left-1/2 top-4 z-50 w-full max-w-5xl -translate-x-1/2 px-4 font-[Inter]"
+    >
+      <div className="flex items-center justify-between rounded-xl border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900/80 px-4 py-2 shadow-xl backdrop-blur-md sm:px-6 sm:py-3 transition-colors duration-300">
+        {/* Logo Section - Now using standard <a> tag */}
+        <a
+          href="/"
+          className="flex items-center gap-2 text-gray-900 dark:text-white"
+        >
           <div className="flex items-center gap-1">
-            {" "}
-            {/* Updated logo to match AI theme */}
-            <div className="w-2 h-2 rounded-full bg-primary"></div>
-            <div className="w-2 h-2 rounded-full bg-primary opacity-60"></div>
-            <div className="w-2 h-2 rounded-full bg-primary opacity-30"></div>
+            {/* Using standard Tailwind indigo colors */}
+            <div className="w-2 h-2 rounded-full bg-indigo-500"></div>
+            <div className="w-2 h-2 rounded-full bg-indigo-500 opacity-60"></div>
+            <div className="w-2 h-2 rounded-full bg-indigo-500 opacity-30"></div>
           </div>
-          <span className="text-sm font-bold">AI Interviewer</span> {/* Made font bolder */}
-        </Link>
+          <span className="text-sm font-bold">AI Interviewer</span>
+        </a>
+
+        {/* Main Navigation Links (Desktop only) - Now using standard <a> tag */}
         <div className="hidden items-center gap-8 md:flex">
-          {" "}
-          {/* Increased gap slightly */}
-          <Link href="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <a
+            href="/"
+            className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+          >
             Home
-          </Link>
-          <Link href="/#models" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-            {" "}
-            {/* Updated link to models */}
+          </a>
+          <a
+            href="/#models"
+            className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+          >
             Modes
-          </Link>
-          <Link
+          </a>
+          <a
             href="/create-interview"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
           >
             Practice
-          </Link>
+          </a>
         </div>
-        <div className="flex items-center gap-3">
-          {" "}
-          {/* Slightly increased gap */}
+
+        {/* Auth Buttons and Theme Toggle (Visible on all devices) */}
+        <div className="flex items-center gap-2 sm:gap-3">
           <ThemeToggle />
-          <Link
-            href="/create-interview"
-            className="rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-sm hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+
+          {/* Login Button (Subtle/Outline style) - Now using standard <a> tag */}
+          <a
+            href="/auth/login"
+            className="rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-800 dark:text-white border border-gray-300 dark:border-gray-700 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 sm:px-4 sm:py-2"
           >
-            Start practicing
-          </Link>
+            Login
+          </a>
+
+          {/* Sign Up Button (Primary CTA style) - Now using standard <a> tag */}
+          <a
+            href="/auth/register"
+            className="rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-indigo-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 sm:px-4 sm:py-2"
+          >
+            Sign Up
+          </a>
         </div>
       </div>
-    </motion.nav>
-  )
-}
+    </nav>
+  );
+};
+
+export default Navbar;
