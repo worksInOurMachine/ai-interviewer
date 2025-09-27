@@ -7,6 +7,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Suspense } from "react";
 import Navbar from "@/components/navbar";
+import ToastProvider from "@/providers/ToastProvider";
 import AuthProvider from "@/components/provider/next-auth-provider";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
@@ -35,7 +36,8 @@ export default async function RootLayout({
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Suspense>
               <Navbar />
-              <div className="h-30" aria-hidden />
+              <ToastProvider />
+            <div className="h-20" aria-hidden />
               {children}
               <Analytics />
             </Suspense>

@@ -4,11 +4,13 @@ import { Label } from "@/components/ui/ac-label";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import React from "react";
+import toast from "react-hot-toast";
 
 export default function SignupFormDemo() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Form submitted", e.currentTarget.email.value);
+    toast.success("Account created successfully!");
   };
   return (
     <div className="shadow-input mx-auto w-full max-w-md rounded-none bg-white p-4 md:rounded-2xl md:p-8 dark:bg-black">
