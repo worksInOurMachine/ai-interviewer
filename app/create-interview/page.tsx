@@ -23,6 +23,9 @@ function Page() {
 
   const handleSubmitFinal = async () => {
     try {
+      if (!skills || !topic) {
+        return toast.error("please provide skills and job role")
+      }
       const finalData = {
         resume: resume || null,
         mode,
@@ -171,7 +174,7 @@ function Page() {
           </div>
 
           <div className="mb-2">
-            <label className={LabelClasses}>Topic / Focus</label>
+            <label className={LabelClasses}>Job Role</label>
             <input
               type="text"
               value={topic}
@@ -201,9 +204,10 @@ function Page() {
             onChange={(e) => setQuestions(e.target.value)}
             className={SelectClasses}
           >
-            <option value="2">5 Questions (Quick)</option>
-            <option value="5">10 Questions (Standard)</option>
-            <option value="10">15 Questions (Deep Dive)</option>
+            <option value="3">3 Questions (Quick)</option>
+            <option value="5">5 Questions (Quick)</option>
+            <option value="10">10 Questions (Standard)</option>
+            <option value="15">15 Questions (Deep Dive)</option>
             <option value="20">20 Questions (Comprehensive)</option>
           </select>
         </div>
