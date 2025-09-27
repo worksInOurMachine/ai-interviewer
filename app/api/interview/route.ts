@@ -21,7 +21,7 @@ Follow these rules strictly:
 - Keep your questions short, clear, and relevant to the given skills and topic.
 - After the last question, thank the user and end the interview and also generate a detailed report on it.
 `;
-    
+
 
     const API_URI =  "https://text.pollinations.ai/openai" 
 
