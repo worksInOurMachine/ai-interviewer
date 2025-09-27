@@ -17,7 +17,7 @@ export default function SignupFormDemo() {
     console.log("Form submitted", e.currentTarget.email.value);
     toast.success("Account created successfully!");
   };
-  return (  
+  return (
     <div className="shadow-input mx-auto w-full max-w-md rounded-none bg-white p-4 md:rounded-2xl md:p-8 dark:bg-black">
       <h2 className="text-xl font-bold text-neutral-800 dark:text-neutral-200">
         Welcome to AI Interviewer!

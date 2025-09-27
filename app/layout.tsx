@@ -32,7 +32,7 @@ export default function RootLayout({
           <Suspense>
             <Navbar />
             <ToastProvider />
-            <div className="h-30" aria-hidden />
+            <div className="h-20" aria-hidden />
             {children}
             <Analytics />
           </Suspense>
