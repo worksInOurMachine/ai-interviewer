@@ -35,7 +35,9 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
     numOfQuestions: interviewData?.[0]?.numberOfQuestions,
     skills: interviewData?.[0]?.skills || [],
   };
-  const resumeUrl = `http://localhost:1337${interviewData?.[0]?.resume[0]?.url}`;
+  const resumeUrl = `${interviewData?.[0]?.resume[0]?.url}`;
+
+  console.log(resumeUrl)
 
   const initialGreetings = async () => {
     try {
@@ -43,14 +45,14 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
         {
           type: "image_url",
           image_url: {
-            url: "https://res.cloudinary.com/dsbutpmej/image/upload/v1758988659/void_images/vesabnpb0oh6yeqw6uxt.png",
+            url: resumeUrl
           },
         },
         { type: "text", text: "" },
       ];
       console.log("Initial Greetings with resume:", content);
       await sendMessage({ content, interviewDetails });
-    } catch (error) {}
+    } catch (error) { }
   };
 
   useEffect(() => {
