@@ -7,34 +7,31 @@ import { signIn } from "next-auth/react";
 import Link from "next/link";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
-
+import { useRouter } from "next/navigation";
 export default function SignupFormDemo() {
+    const router = useRouter()
   const [loading, setLoading] = useState(false);
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      setLoading(true);
-      console.log({
-        identifier: e.currentTarget.email.value,
-        password: e.currentTarget.password.value,
-      });
+      setLoading(true)
       const res = await signIn("credentials", {
         redirect: false,
         identifier: e.currentTarget.email.value,
         password: e.currentTarget.password.value,
       });
-      console.log(res, "res______________--");
       if (res?.ok) {
         toast.success("Login successful");
         const redirectRoute =
           JSON.parse(localStorage.getItem("redirectRoute")!)! || "/";
         localStorage.removeItem("redirectRoute");
-        window.location.href = redirectRoute;
+        router.push(redirectRoute);
       } else {
-        toast.error("Invalid Password");
+        toast.error("Invalid Email or Password");
       }
     } catch (error) {
-      console.log("Login Error", error);
+      console.log("Login Error", error)
+      toast.error("Something went wrong")
     } finally {
       setLoading(false);
     }
