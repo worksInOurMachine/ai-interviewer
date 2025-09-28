@@ -11,6 +11,8 @@ import toast from "react-hot-toast";
 import { strapi } from "@/lib/api/sdk";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import Orb from "@/components/Orb";
+import TrueFocus from "@/components/TrueFocus";
 
 type Message = { role: "assistant" | "user"; content: string };
 
@@ -114,7 +116,25 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
   }
 
   if (isLoading) {
-    return <div>Loading interview...</div>;
+    return <div className="flex justify-center flex-col gap-8 items-center w-full h-[80vh]">
+
+      <div style={{ width: '25%', height: '150px' }}  >
+        <Orb
+          hoverIntensity={0.5}
+          rotateOnHover={true}
+          hue={0}
+          forceHoverState={false}
+        />
+      </div>
+      <TrueFocus
+        sentence="Interview Loading..."
+        manualMode={false}
+        blurAmount={5}
+        borderColor="blue"
+        animationDuration={2}
+        pauseBetweenAnimations={1}
+      />
+    </div>;
   }
 
   return (
