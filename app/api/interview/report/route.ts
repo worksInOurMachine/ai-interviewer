@@ -2,7 +2,7 @@ export async function POST(req: Request) {
   try {
     const { messages, interviewDetails } = await req.json();
 
-    const model = "gemini";
+    const model = "mistral";
 
    const systemPrompt = `
 You are an expert AI recruiter. Generate a **full HTML interview report** inside a Markdown string, ready to render in ReactMarkdown + rehypeRaw.  
