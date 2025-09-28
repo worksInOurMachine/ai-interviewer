@@ -218,16 +218,16 @@ export default function EmotionAnalyzerPage() {
     const smileScore = avg('surprised'); // can also track smile separately
     const blink = avg('blink'); // can also track blink separately
 
-    feedback.push(`Confidence: ${(conf * 100).toFixed(1)}%`);
+    /* feedback.push(`Confidence: ${(conf * 100).toFixed(1)}%`);
     feedback.push(`Nervousness: ${(nerv * 100).toFixed(1)}%`);
     feedback.push(`Happiness: ${(happ * 100).toFixed(1)}%`);
     feedback.push(`Sadness: ${(sadScore * 100).toFixed(1)}%`);
     feedback.push(`Smile/Surprise: ${(smileScore * 100).toFixed(1)}%`);
-    feedback.push(`Blink Rate: ${blink.toFixed(1)} blinks/min`);
+    feedback.push(`Blink Rate: ${blink.toFixed(1)} blinks/min`); */
 
-    feedback.push(conf < 0.7 ? 'Try to maintain eye contact and speak confidently.' : 'Good job maintaining confidence.');
-    feedback.push(nerv > 0.20 ? 'Try to relax and avoid fidgeting, it may indicate nervousness. Take deep breaths.' : 'Good job staying calm.');
-    feedback.push(happ < 0.45 ? 'Smile more naturally to appear approachable.' : 'Good job being friendly.');
+    feedback.push(conf < 0.7 ? 'Try to maintain eye contact and speak confidently, need to improve confidence.' : 'Good job maintaining confidence.');
+    feedback.push(nerv > 0.20 ? 'Try to relax and avoid fidgeting, it may indicate nervousness. Take deep breaths, need to decrease nervousness.' : 'Good job staying calm, no nervousness.');
+    feedback.push(happ < 0.45 ? 'Smile more naturally to appear approachable, need to smile and be happy.' : 'Good job being friendly.');
     feedback.push(sadScore > 0.3 ? 'Avoid showing too much sadness; stay positive.' : 'Good job staying positive.');
     feedback.push(blink < 5 ? 'Remember to blink naturally to avoid staring.' : 'Good job blinking normally.');
     feedback.push(blink > 20 ? 'Try to reduce excessive blinking, it may indicate nervousness.' : '');
