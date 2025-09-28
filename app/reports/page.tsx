@@ -14,15 +14,14 @@ import {
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
 
 export default function ReportsPage() {
   const { data: user } = useSession<any>();
   const router = useRouter();
 
   const { data, error, isLoading } = useStrapi("interviews", {
-    filters: {
-      user: user?.user?.id,
-    },
+    filters: { user: user?.user?.id },
   });
 
   const [selectedReport, setSelectedReport] = useState<string | null>(null);
@@ -90,7 +89,7 @@ export default function ReportsPage() {
         ))}
       </div>
 
-      {/* Modal for Markdown report */}
+      {/* Modal for Markdown + HTML report */}
       <Dialog
         open={!!selectedReport}
         onOpenChange={() => setSelectedReport(null)}
@@ -100,9 +99,11 @@ export default function ReportsPage() {
             <DialogTitle>Interview Report</DialogTitle>
           </DialogHeader>
 
-          <div className="prose max-w-full">
+          <div className="prose max-w-full bg-black text-white">
             {selectedReport && (
-              <ReactMarkdown >{cleanMarkdown(selectedReport)}</ReactMarkdown>
+              <ReactMarkdown rehypePlugins={[rehypeRaw]}>
+                {cleanMarkdown(selectedReport)}
+              </ReactMarkdown>
             )}
           </div>
 
