@@ -1,18 +1,18 @@
 "use client";
+
+import { useState, useEffect } from "react";
 import VideoPreview from "@/components/video-preview";
 import InterviewChatPane from "@/components/interview-chat-pane";
 import InterviewControls from "@/components/interview-controls";
 import { Card } from "@/components/ui/card";
-import { useStrapi } from "@/lib/api/useStrapi";
-import { useEffect, useState } from "react";
-import { useChat } from "./useChat";
 import { Button } from "@/components/ui/button";
+import { useStrapi } from "@/lib/api/useStrapi";
+import { useChat } from "./useChat";
+import { useMurfTTS } from "./useMurfTTS";
 import toast from "react-hot-toast";
 import { strapi } from "@/lib/api/sdk";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
-import Orb from "@/components/Orb";
-import TrueFocus from "@/components/TrueFocus";
 
 type Message = { role: "assistant" | "user"; content: string };
 
@@ -24,14 +24,28 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
   const [listening, setListening] = useState(false);
   const [text, setText] = useState("");
   const [isGeneratingReport, setIsGeneratingReport] = useState(false);
+  const [startAnalyticts, setStartAnalyticts] = useState<any>(null);
+  const [stopAnalyticts, setStopAnalyticts] = useState<any>(null);
+
+  const [showStartModal, setShowStartModal] = useState(true); // show modal initially
 
   const router = useRouter();
+
+  const {
+    generateSpeech,
+    stop,
+    unlockPlayback,
+    isPlaying,
+    isLoading: isSpeechLoading,
+    error: speechError,
+  } = useMurfTTS({ voiceId: "en-US-natalie" });
 
   const { sendMessage, isLoading: isChatLoading } = useChat({
     messages,
     setMessages,
     setAiSpeaking,
     setIsInterviewCompleted,
+    generateSpeech,
   });
 
   const { data, error, isLoading } = useStrapi("interviews", {
@@ -49,6 +63,7 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
   };
   const resumeUrl = `${interviewData?.[0]?.resume[0]?.url}`;
 
+  // Initial greeting
   const initialGreetings = async () => {
     try {
       const content = [
@@ -61,84 +76,35 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
     }
   };
 
-  useEffect(() => {
-    if (
-      messages.length === 0 &&
-      resumeUrl &&
-      interviewData &&
-      interviewDetails
-    ) {
-      initialGreetings();
-    }
-  }, [resumeUrl, messages, interviewData, interviewDetails]);
-
-  async function handleSend(content: string) {
-    if (!content) return;
-    await sendMessage({ content, interviewDetails });
-    setText("");
-  }
-
-  async function handleGenerateReport() {
-    try {
-      if (messages.length === 0) {
-        return toast.error("No messages to generate report from");
-      }
-
-      setIsGeneratingReport(true);
-
-      await strapi.update("interviews", params.id, {
-        conversation: messages,
-      });
-
-      const res = await fetch("/api/interview/report", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages, interviewDetails }),
-      });
-
-      if (!res.ok) throw new Error("Failed to generate report");
-
-      const data = await res.json();
-      const report = data?.report;
-
-      if (report) {
-        await strapi.update("interviews", params.id, { report });
-      }
-
-      toast.success("Report generated!");
-      router.push("/reports");
-    } catch (err) {
-      console.error(err);
-      toast.error("Could not generate report");
-    } finally {
-      setIsGeneratingReport(false);
-    }
-  }
+  const startInterview = () => {
+    unlockPlayback();
+    initialGreetings();
+    setShowStartModal(false);
+    if (startAnalyticts) startAnalyticts();
+  };
 
   if (isLoading) {
-    return <div className="flex justify-center flex-col gap-8 items-center w-full h-[80vh]">
-
-      <div style={{ width: '25%', height: '150px' }}  >
-        <Orb
-          hoverIntensity={0.5}
-          rotateOnHover={true}
-          hue={0}
-          forceHoverState={false}
-        />
+    return (
+      <div className="flex justify-center flex-col gap-8 items-center w-full h-[80vh]">
+        <div>Loading interview...</div>
       </div>
-      <TrueFocus
-        sentence="Interview Loading..."
-        manualMode={false}
-        blurAmount={5}
-        borderColor="blue"
-        animationDuration={2}
-        pauseBetweenAnimations={1}
-      />
-    </div>;
+    );
   }
 
   return (
-    <main className="grid min-h-[80vh] grid-rows-[auto_1fr]">
+    <main className="grid min-h-[80vh] grid-rows-[auto_1fr] relative">
+      {/* Start Modal */}
+      {showStartModal && (
+        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black text-white">
+          <h1 className="text-4xl font-bold animate-pulse mb-4">
+            Start Interview
+          </h1>
+          <Button onClick={startInterview} className="px-6 py-3">
+            Click to Start
+          </Button>
+        </div>
+      )}
+
       <header className="border-b">
         <div className="container mx-auto flex items-center justify-between px-4 py-3">
           <h1 className="text-lg font-semibold">Interview Session</h1>
@@ -150,7 +116,10 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
         {/* Left: Full-height user video */}
         <section className="order-2 md:order-1 md:col-span-8">
           <Card className="m-4 h-[calc(100vh-120px)] overflow-hidden p-0 md:m-6">
-            <VideoPreview />
+            <VideoPreview
+              startFn={setStartAnalyticts}
+              stopFn={setStopAnalyticts}
+            />
           </Card>
         </section>
 
@@ -160,26 +129,58 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
             <Card className="flex-1 overflow-hidden">
               <InterviewChatPane
                 messages={messages}
+                isSpeechLoading={isSpeechLoading}
                 setMessages={setMessages}
               />
             </Card>
             <Card className="p-4 flex items-center justify-center">
               {!isInterviewCompleted ? (
                 <InterviewControls
-                  aiSpeaking={aiSpeaking}
+                  aiSpeaking={isSpeechLoading || isPlaying || aiSpeaking}
                   mode={mode}
                   listening={listening}
                   text={text}
-                  setAiSpeaking={setAiSpeaking}
+                  // setAiSpeaking={setAiSpeaking}
                   setMode={setMode}
                   setListening={setListening}
                   setText={setText}
-                  handleSend={handleSend}
+                  handleSend={async (c) => {
+                    await sendMessage({ content: c, interviewDetails });
+                    setText("");
+                  }}
                 />
               ) : (
                 <Button
-                  onClick={handleGenerateReport}
-                  disabled={isGeneratingReport || isChatLoading}
+                  onClick={async () => {
+                    setIsGeneratingReport(true);
+                    try {
+                      if (stopAnalyticts) stopAnalyticts();
+                      await strapi.update("interviews", params.id, {
+                        conversation: messages,
+                      });
+                      const res = await fetch("/api/interview/report", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ messages, interviewDetails }),
+                      });
+                      if (!res.ok) throw new Error("Failed to generate report");
+                      const data = await res.json();
+                      const report = data?.report;
+                      if (report) {
+                        await strapi.update("interviews", params.id, {
+                          report,
+                        });
+                      }
+                      toast.success("Report generated!");
+                      router.push("/reports");
+                    } catch (err) {
+                      console.error(err);
+                      toast.error("Could not generate report");
+                    } finally {
+                      setIsGeneratingReport(false);
+                    }
+                  }}
+                  disabled={isGeneratingReport}
                   className="w-full flex items-center justify-center gap-2"
                 >
                   {isGeneratingReport ? (

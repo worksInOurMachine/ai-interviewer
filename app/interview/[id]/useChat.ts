@@ -6,8 +6,10 @@ export function useChat({
   setMessages = () => {},
   setAiSpeaking = () => {},
   setIsInterviewCompleted = () => {},
+  generateSpeech = () => {}, // TTS function
 }: any) {
   const [isLoading, setIsLoading] = useState(false);
+  
 
   const sendMessage = useCallback(
     async ({ content, interviewDetails }: any): Promise<void> => {
@@ -76,6 +78,12 @@ export function useChat({
             const jsonStr = trimmed.replace("data:", "").trim();
             if (jsonStr === "[DONE]") {
               buffer = "";
+
+              // 🔹 Call generateSpeech ONCE after the message is fully received
+              if (aiContent) {
+                generateSpeech(aiContent);
+              }
+
               break;
             }
 
@@ -106,8 +114,6 @@ export function useChat({
                   }
                   return updated;
                 });
-
-                await new Promise((r) => setTimeout(r, 10));
               }
             } catch (err) {
               console.error("❌ Stream parse error:", jsonStr, err);
@@ -122,7 +128,7 @@ export function useChat({
         setAiSpeaking(false);
       }
     },
-    [messages, toast]
+    [messages, generateSpeech]
   );
 
   return {

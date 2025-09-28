@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React, { useEffect, useRef, useState } from 'react';
-import Script from 'next/script';
-import MetricsPanel from '@/components/MetricsPanel';
+import React, { useEffect, useRef, useState } from "react";
+import Script from "next/script";
+import MetricsPanel from "@/components/MetricsPanel";
 
 interface EmotionData {
   timestamp: number;
@@ -14,13 +14,13 @@ interface EmotionData {
   blink: number;
 }
 
-export default function EmotionAnalyzerPage() {
+export default function EmotionAnalyzerPage({ startFn, stopFn }: any) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const cameraRef = useRef<any>(null);
   const faceMeshRef = useRef<any>(null);
   const [running, setRunning] = useState(false);
-  const [loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded] = useState(true);
 
   const [blinkRate, setBlinkRate] = useState(0);
   const [nervousness, setNervousness] = useState(0);
@@ -31,16 +31,26 @@ export default function EmotionAnalyzerPage() {
 
   const blinkTimestampsRef = useRef<number[]>([]);
   const earHistoryRef = useRef<number[]>([]);
-  const lastEmotionRef = useRef({ happy: 0, sad: 0, nervous: 0, surprised: 0, confidence: 0, mar: 0, ear: 0, blink: 0 });
+  const lastEmotionRef = useRef({
+    happy: 0,
+    sad: 0,
+    nervous: 0,
+    surprised: 0,
+    confidence: 0,
+    mar: 0,
+    ear: 0,
+    blink: 0,
+  });
 
   // **Session recording**
   const sessionDataRef = useRef<EmotionData[]>([]);
 
   const euclid = (a: any, b: any) => Math.hypot(a.x - b.x, a.y - b.y);
-  const smooth = (prev: number, current: number, alpha = 0.3) => prev * (1 - alpha) + current * alpha;
+  const smooth = (prev: number, current: number, alpha = 0.3) =>
+    prev * (1 - alpha) + current * alpha;
 
   const eyeAspectRatio = (lm: any, idxs: number[]) => {
-    const [p0, p1, p2, p3, p4, p5] = idxs.map(i => lm[i]);
+    const [p0, p1, p2, p3, p4, p5] = idxs.map((i) => lm[i]);
     const A = euclid(p1, p5);
     const B = euclid(p2, p4);
     const C = euclid(p0, p3);
@@ -74,7 +84,7 @@ export default function EmotionAnalyzerPage() {
     const video = videoRef.current;
     const canvas = canvasRef.current;
     if (!canvas || !video) return;
-    const ctx = canvas.getContext('2d')!;
+    const ctx = canvas.getContext("2d")!;
     const videoWidth = canvas.clientWidth;
     const videoHeight = canvas.clientHeight;
     canvas.width = videoWidth;
@@ -87,13 +97,16 @@ export default function EmotionAnalyzerPage() {
     const lm = results.multiFaceLandmarks[0];
     // Draw face mesh overlays
     // @ts-ignore
-    drawConnectors(ctx, lm, FACEMESH_TESSELATION, { color: '#C0C0C080', lineWidth: 1 });
+    drawConnectors(ctx, lm, FACEMESH_TESSELATION, {
+      color: "#C0C0C080",
+      lineWidth: 1,
+    });
     // @ts-ignore
-    drawConnectors(ctx, lm, FACEMESH_LEFT_EYE, { color: '#30FF30' });
+    drawConnectors(ctx, lm, FACEMESH_LEFT_EYE, { color: "#30FF30" });
     // @ts-ignore
-    drawConnectors(ctx, lm, FACEMESH_RIGHT_EYE, { color: '#FF3030' });
+    drawConnectors(ctx, lm, FACEMESH_RIGHT_EYE, { color: "#FF3030" });
     // @ts-ignore
-    drawConnectors(ctx, lm, FACEMESH_LIPS, { color: '#E0E0E0' });
+    drawConnectors(ctx, lm, FACEMESH_LIPS, { color: "#E0E0E0" });
 
     // Blink detection
     const leftEAR = eyeAspectRatio(lm, [33, 160, 158, 133, 153, 144]);
@@ -102,10 +115,14 @@ export default function EmotionAnalyzerPage() {
     earHistoryRef.current.push(ear);
     if (earHistoryRef.current.length > 300) earHistoryRef.current.shift();
 
-    const prevEar = earHistoryRef.current[earHistoryRef.current.length - 2] || ear;
-    if (prevEar > 0.20 && ear <= 0.20) blinkTimestampsRef.current.push(Date.now());
+    const prevEar =
+      earHistoryRef.current[earHistoryRef.current.length - 2] || ear;
+    if (prevEar > 0.2 && ear <= 0.2)
+      blinkTimestampsRef.current.push(Date.now());
     const oneMinuteAgo = Date.now() - 60000;
-    blinkTimestampsRef.current = blinkTimestampsRef.current.filter(t => t > oneMinuteAgo);
+    blinkTimestampsRef.current = blinkTimestampsRef.current.filter(
+      (t) => t > oneMinuteAgo
+    );
     const br = blinkTimestampsRef.current.length;
     setBlinkRate(blinkTimestampsRef.current.length);
 
@@ -120,16 +137,38 @@ export default function EmotionAnalyzerPage() {
     const headDown = Math.min(Math.max(pose.pitch / 0.15, -1), 1);
 
     // Surprise
-    const earMean = earHistoryRef.current.reduce((a, b) => a + b, 0) / earHistoryRef.current.length;
-    const earStd = Math.sqrt(earHistoryRef.current.reduce((s, x) => s + (x - earMean) ** 2, 0) / earHistoryRef.current.length) || 0.0001;
-    const eyeWideFeature = Math.min(Math.max((ear - earMean) / (2 * earStd), 0), 1);
+    const earMean =
+      earHistoryRef.current.reduce((a, b) => a + b, 0) /
+      earHistoryRef.current.length;
+    const earStd =
+      Math.sqrt(
+        earHistoryRef.current.reduce((s, x) => s + (x - earMean) ** 2, 0) /
+          earHistoryRef.current.length
+      ) || 0.0001;
+    const eyeWideFeature = Math.min(
+      Math.max((ear - earMean) / (2 * earStd), 0),
+      1
+    );
     const browDist = euclid(lm[105], lm[159]);
     const faceHeight = euclid(lm[10], lm[152]) || 1;
-    const browFeature = Math.min(Math.max((browDist / faceHeight - 0.03) / 0.06, 0), 1);
-    const deltaMar = Math.min(Math.max((mar - (lastEmotionRef.current.mar || mar)) * 10, 0), 1);
-    const deltaEar = Math.min(Math.max((ear - (lastEmotionRef.current.ear || ear)) * 10, 0), 1);
+    const browFeature = Math.min(
+      Math.max((browDist / faceHeight - 0.03) / 0.06, 0),
+      1
+    );
+    const deltaMar = Math.min(
+      Math.max((mar - (lastEmotionRef.current.mar || mar)) * 10, 0),
+      1
+    );
+    const deltaEar = Math.min(
+      Math.max((ear - (lastEmotionRef.current.ear || ear)) * 10, 0),
+      1
+    );
 
-    let rawSurprise = 0.4 * marFeature + 0.3 * eyeWideFeature + 0.2 * browFeature + 0.1 * Math.max(deltaMar, deltaEar);
+    let rawSurprise =
+      0.4 * marFeature +
+      0.3 * eyeWideFeature +
+      0.2 * browFeature +
+      0.1 * Math.max(deltaMar, deltaEar);
     rawSurprise *= 1 - smile;
     const finalSurprise = smooth(lastEmotionRef.current.surprised, rawSurprise);
     setSurprised(Number(finalSurprise.toFixed(2)));
@@ -138,13 +177,26 @@ export default function EmotionAnalyzerPage() {
     const gazeFactor = 1 - gazeAversion;
     const happyRaw = smooth(
       lastEmotionRef.current.happy,
-      Math.min(Math.max(0.6 * smile + 0.3 * browFeature + 0.1 * (1 - marFeature), 0), 1) * gazeFactor
+      Math.min(
+        Math.max(0.6 * smile + 0.3 * browFeature + 0.1 * (1 - marFeature), 0),
+        1
+      ) * gazeFactor
     );
     setHappy(Number(happyRaw.toFixed(2)));
 
     // Sadness
     const mouthDown = (lm[61].y + lm[291].y) / 2 - lm[0].y;
-    const originalSad = Math.min(Math.max(0.4 * headDown + 0.3 * Math.max(-mouthDown / faceHeight, 0) + 0.2 * (1 - browFeature) + 0.1 * marFeature, 0), 1) * gazeFactor;
+    const originalSad =
+      Math.min(
+        Math.max(
+          0.4 * headDown +
+            0.3 * Math.max(-mouthDown / faceHeight, 0) +
+            0.2 * (1 - browFeature) +
+            0.1 * marFeature,
+          0
+        ),
+        1
+      ) * gazeFactor;
     const sadRaw = smooth(
       lastEmotionRef.current.sad,
       0.5 * (1 - happyRaw) + 0.5 * originalSad
@@ -157,9 +209,9 @@ export default function EmotionAnalyzerPage() {
       Math.min(
         1,
         0.5 * blinkFeature +
-        0.3 * gazeAversion +
-        0.2 * marFeature +
-        0.2 * (1 - happyRaw)      // Increase nervousness if happy is low
+          0.3 * gazeAversion +
+          0.2 * marFeature +
+          0.2 * (1 - happyRaw) // Increase nervousness if happy is low
         //   0.2 * (1 - finalConf)       // Increase nervousness if confidence is low
       )
     );
@@ -170,14 +222,28 @@ export default function EmotionAnalyzerPage() {
     const stabilityFeature = Math.min(1, 0.5 / (earStd + 0.0001));
     const speakingPenalty = marFeature;
     const surprisePenalty = finalSurprise * (1 - smile);
-    const pos = 0.35 * smile + 0.25 * gazeFeature + 0.15 * (1 - headDown) + 0.25 * stabilityFeature;
-    const neg = 0.6 * nervousRaw + 0.25 * speakingPenalty + 0.15 * surprisePenalty;
+    const pos =
+      0.35 * smile +
+      0.25 * gazeFeature +
+      0.15 * (1 - headDown) +
+      0.25 * stabilityFeature;
+    const neg =
+      0.6 * nervousRaw + 0.25 * speakingPenalty + 0.15 * surprisePenalty;
     const rawConf = Math.max(-1, Math.min(1, pos - neg));
     const logistic = 1 / (1 + Math.exp(-2 * rawConf));
     const finalConf = smooth(lastEmotionRef.current.confidence, logistic);
     setConfidence(Number(finalConf.toFixed(2)));
 
-    lastEmotionRef.current = { happy: happyRaw, sad: sadRaw, nervous: nervousRaw, surprised: finalSurprise, confidence: finalConf, mar, ear, blink: br };
+    lastEmotionRef.current = {
+      happy: happyRaw,
+      sad: sadRaw,
+      nervous: nervousRaw,
+      surprised: finalSurprise,
+      confidence: finalConf,
+      mar,
+      ear,
+      blink: br,
+    };
 
     // ------------------- Record session -------------------
     sessionDataRef.current.push({
@@ -192,9 +258,9 @@ export default function EmotionAnalyzerPage() {
 
     // Draw overlays
     const confPercent = Math.round(finalConf * 100);
-    ctx.fillStyle = 'white';
-    ctx.font = '12px Inter, sans-serif';
-    ctx.fillText(`EAR: ${ear.toFixed(3)}`, 8, 18);// EAR – Effective Address Register ->  CPU first calculates the effective address using addressing modes → then stores it in EAR.Once EAR has the final address, it can be moved to MAR to actually fetch the data.
+    ctx.fillStyle = "white";
+    ctx.font = "12px Inter, sans-serif";
+    ctx.fillText(`EAR: ${ear.toFixed(3)}`, 8, 18); // EAR – Effective Address Register ->  CPU first calculates the effective address using addressing modes → then stores it in EAR.Once EAR has the final address, it can be moved to MAR to actually fetch the data.
     ctx.fillText(`MAR: ${mar.toFixed(3)}`, 8, 34); // MAR – Memory Address Register -> It holds the address in memory where the CPU either wants to read data from or write data to.
     ctx.fillText(`Smile: ${Number(smile * 100).toFixed(0)}`, 8, 50);
     ctx.fillText(`Blinks/min: ${br}`, 8, 66);
@@ -206,17 +272,18 @@ export default function EmotionAnalyzerPage() {
   // ------------------- Feedback Generation -------------------
   const generateFeedback = () => {
     const data = sessionDataRef.current;
-    if (!data.length) return 'No session data recorded.';
+    if (!data.length) return "No session data recorded.";
 
-    const avg = (key: keyof EmotionData) => data.reduce((sum, d) => sum + d[key], 0) / data.length;
+    const avg = (key: keyof EmotionData) =>
+      data.reduce((sum, d) => sum + d[key], 0) / data.length;
     const feedback: string[] = [];
 
-    const conf = avg('confidence');
-    const nerv = avg('nervous');
-    const happ = avg('happy');
-    const sadScore = avg('sad');
-    const smileScore = avg('surprised'); // can also track smile separately
-    const blink = avg('blink'); // can also track blink separately
+    const conf = avg("confidence");
+    const nerv = avg("nervous");
+    const happ = avg("happy");
+    const sadScore = avg("sad");
+    const smileScore = avg("surprised"); // can also track smile separately
+    const blink = avg("blink"); // can also track blink separately
 
     /* feedback.push(`Confidence: ${(conf * 100).toFixed(1)}%`);
     feedback.push(`Nervousness: ${(nerv * 100).toFixed(1)}%`);
@@ -225,42 +292,72 @@ export default function EmotionAnalyzerPage() {
     feedback.push(`Smile/Surprise: ${(smileScore * 100).toFixed(1)}%`);
     feedback.push(`Blink Rate: ${blink.toFixed(1)} blinks/min`); */
 
-    feedback.push(conf < 0.7 ? 'Try to maintain eye contact and speak confidently, need to improve confidence.' : 'Good job maintaining confidence.');
-    feedback.push(nerv > 0.20 ? 'Try to relax and avoid fidgeting, it may indicate nervousness. Take deep breaths, need to decrease nervousness.' : 'Good job staying calm, no nervousness.');
-    feedback.push(happ < 0.45 ? 'Smile more naturally to appear approachable, need to smile and be happy.' : 'Good job being friendly.');
-    feedback.push(sadScore > 0.3 ? 'Avoid showing too much sadness; stay positive.' : 'Good job staying positive.');
-    feedback.push(blink < 5 ? 'Remember to blink naturally to avoid staring.' : 'Good job blinking normally.');
-    feedback.push(blink > 20 ? 'Try to reduce excessive blinking, it may indicate nervousness.' : '');
+    feedback.push(
+      conf < 0.7
+        ? "Try to maintain eye contact and speak confidently, need to improve confidence."
+        : "Good job maintaining confidence."
+    );
+    feedback.push(
+      nerv > 0.2
+        ? "Try to relax and avoid fidgeting, it may indicate nervousness. Take deep breaths, need to decrease nervousness."
+        : "Good job staying calm, no nervousness."
+    );
+    feedback.push(
+      happ < 0.45
+        ? "Smile more naturally to appear approachable, need to smile and be happy."
+        : "Good job being friendly."
+    );
+    feedback.push(
+      sadScore > 0.3
+        ? "Avoid showing too much sadness; stay positive."
+        : "Good job staying positive."
+    );
+    feedback.push(
+      blink < 5
+        ? "Remember to blink naturally to avoid staring."
+        : "Good job blinking normally."
+    );
+    feedback.push(
+      blink > 20
+        ? "Try to reduce excessive blinking, it may indicate nervousness."
+        : ""
+    );
 
-    return feedback.join('\n');
+    return feedback.join("\n");
   };
 
   const stop = () => {
     try {
       cameraRef.current?.stop();
       const stream = videoRef.current?.srcObject as MediaStream | null;
-      stream?.getTracks().forEach(t => t.stop());
+      stream?.getTracks().forEach((t) => t.stop());
       if (videoRef.current) videoRef.current.srcObject = null;
-    } catch { }
+    } catch {}
     setRunning(false);
 
     // Show feedback
     const feedback = generateFeedback();
     alert(`Session Feedback:\n\n${feedback}`);
     // Optionally, console.log for dev
-    console.log('Session Data:', sessionDataRef.current);
+    console.log("Session Data:", sessionDataRef.current);
   };
 
   // ------------------- UI & Scripts -------------------
   const start = async () => {
     if (running) return;
-    if (!loaded) return alert('MediaPipe not loaded yet.');
+    if (!loaded) return alert("MediaPipe not loaded yet.");
     const video = videoRef.current!;
     if (!faceMeshRef.current) {
       faceMeshRef.current = new (window as any).FaceMesh({
-        locateFile: (f: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${f}`,
+        locateFile: (f: string) =>
+          `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${f}`,
       });
-      faceMeshRef.current.setOptions({ maxNumFaces: 1, refineLandmarks: true, minDetectionConfidence: 0.6, minTrackingConfidence: 0.6 });
+      faceMeshRef.current.setOptions({
+        maxNumFaces: 1,
+        refineLandmarks: true,
+        minDetectionConfidence: 0.6,
+        minTrackingConfidence: 0.6,
+      });
       faceMeshRef.current.onResults(onResults);
     }
 
@@ -278,21 +375,38 @@ export default function EmotionAnalyzerPage() {
       setRunning(true);
     } catch (err) {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: false,
+        });
         video.srcObject = stream;
         await video.play();
         cameraRef.current.start();
         setRunning(true);
       } catch {
-        alert('Camera permission required.');
+        alert("Camera permission required.");
       }
     }
   };
 
+  useEffect(() => {
+    startFn(() => start);
+    stopFn(() => stop);
+  }, [startFn, stopFn]);
+
   const reset = () => {
     blinkTimestampsRef.current = [];
     earHistoryRef.current = [];
-    lastEmotionRef.current = { happy: 0, sad: 0, nervous: 0, surprised: 0, confidence: 0, mar: 0, ear: 0, blink: 0 };
+    lastEmotionRef.current = {
+      happy: 0,
+      sad: 0,
+      nervous: 0,
+      surprised: 0,
+      confidence: 0,
+      mar: 0,
+      ear: 0,
+      blink: 0,
+    };
     sessionDataRef.current = [];
     setBlinkRate(0);
     setHappy(0);
@@ -304,23 +418,32 @@ export default function EmotionAnalyzerPage() {
 
   return (
     <div className="flex h-screen w-full flex-col">
-  
       {/* Right Video Feed */}
       <div className="flex-1 flex flex-col py-4  items-center justify-center bg-black">
         <video ref={videoRef} className="hidden" playsInline></video>
-        <canvas ref={canvasRef} width="440" height="300" className="rounded-xl shadow-lg"></canvas>
+        <canvas
+          ref={canvasRef}
+          width="440"
+          height="300"
+          className="rounded-xl shadow-lg"
+        ></canvas>
         <p className="text-white mt-2">Live Camera Feed with Emotion Overlay</p>
       </div>
       <div className=" bg-secondary border-r overflow-scroll no-scrollbar w-full p-4">
-       {/*  <h1 className="text-2xl font-bold mb-4">Emotion Analysis Dashboard</h1> */}
+        {/*  <h1 className="text-2xl font-bold mb-4">Emotion Analysis Dashboard</h1> */}
         <div className="flex gap-2 mb-4">
           <button
-            className={`px-4 py-2 rounded-md shadow cursor-pointer text-white ${running ? 'bg-red-500' : 'bg-green-600'}`}
+            className={`px-4 py-2 rounded-md shadow cursor-pointer text-white ${
+              running ? "bg-red-500" : "bg-green-600"
+            }`}
             onClick={() => (running ? stop() : start())}
           >
-            {running ? 'Stop' : 'Start'}
+            {running ? "Stop" : "Start"}
           </button>
-          <button className="px-4 py-2 rounded-md cursor-pointer border" onClick={reset}>
+          <button
+            className="px-4 py-2 rounded-md cursor-pointer border"
+            onClick={reset}
+          >
             Reset
           </button>
         </div>
@@ -333,10 +456,13 @@ export default function EmotionAnalyzerPage() {
         />
       </div>
 
-      <Script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" onLoad={() => setLoaded(true)} />
+      {/* <Script
+        src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"
+        onLoad={() => setLoaded(true)}
+      />
       <Script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" />
       <Script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" />
-      <Script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" />
+      <Script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" /> */}
     </div>
   );
 }

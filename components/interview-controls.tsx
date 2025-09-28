@@ -12,7 +12,7 @@ export default function InterviewControls({
   mode,
   listening,
   text,
-  setAiSpeaking,
+  // setAiSpeaking,
   setMode,
   setListening,
   setText,
@@ -22,7 +22,7 @@ export default function InterviewControls({
   mode: "voice" | "text";
   listening: boolean;
   text: string;
-  setAiSpeaking: (speaking: boolean) => void;
+  // setAiSpeaking: (speaking: boolean) => void;
   setMode: (mode: "voice" | "text") => void;
   setListening: (listening: boolean | ((prev: boolean) => boolean)) => void;
   setText: (text: string) => void;
