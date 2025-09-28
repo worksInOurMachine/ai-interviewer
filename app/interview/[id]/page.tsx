@@ -128,14 +128,14 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-15">
         {/* Left: Full-height user video */}
-        <section className="order-2 md:order-1 md:col-span-7">
+        <section className="order-2 md:order-1 md:col-span-8">
           <Card className="m-4 h-[calc(100vh-120px)] overflow-hidden p-0 md:m-6">
             <VideoPreview />
           </Card>
         </section>
 
         {/* Right: AI text panel and controls */}
-        <aside className="order-1 md:order-2 md:col-span-8">
+        <aside className="order-1 md:order-2 md:col-span-7">
           <div className="m-4 flex h-[calc(100vh-120px)] flex-col gap-4 md:m-6">
             <Card className="flex-1 overflow-hidden">
               <InterviewChatPane
