@@ -11,6 +11,7 @@ import ToastProvider from "@/providers/ToastProvider";
 import AuthProvider from "@/components/provider/next-auth-provider";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
+import LightRays from "@/components/LightRay";
 
 export const metadata: Metadata = {
   title: "AI Interviewer - Master Your Next Interview",
@@ -31,7 +32,23 @@ export default async function RootLayout({
       className={`${GeistSans.variable} ${GeistMono.variable} antialiased`}
       suppressHydrationWarning={true}
     >
-      <body className="font-sans scroll no-scrollbar">
+      <body className="font-sans scroll no-scrollbar relative min-h-screen">
+      
+          {/* Orb Background */}
+          <div className="absolute inset-0 z-[-1]">
+            <LightRays
+              raysOrigin="top-center"
+              raysColor="#00ffff"
+              raysSpeed={1.5}
+              lightSpread={0.8}
+              rayLength={1.2}
+              followMouse={true}
+              mouseInfluence={0.1}
+              noiseAmount={0.1}
+              distortion={0.05}
+              className="custom-rays"
+            />
+          </div>
         <AuthProvider session={session}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Suspense>
