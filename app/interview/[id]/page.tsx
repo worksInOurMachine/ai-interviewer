@@ -27,6 +27,7 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
   const [startAnalyticts, setStartAnalyticts] = useState<any>(null);
   const [stopAnalyticts, setStopAnalyticts] = useState<any>(null);
 
+
   const [showStartModal, setShowStartModal] = useState(true); // show modal initially
 
   const router = useRouter();
@@ -82,6 +83,7 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
     unlockPlayback();
     initialGreetings();
     setShowStartModal(false);
+
     if (startAnalyticts) startAnalyticts();
   };
 
@@ -123,6 +125,7 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
             <VideoPreview
               startFn={setStartAnalyticts}
               stopFn={setStopAnalyticts}
+
             />
           </Card>
         </section>
@@ -159,14 +162,17 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
                   onClick={async () => {
                     setIsGeneratingReport(true);
                     try {
-                      if (stopAnalyticts) stopAnalyticts();
+                      let feed = ""
+                      if (stopAnalyticts) {
+                        feed = stopAnalyticts();
+                      }
                       await strapi.update("interviews", params.id, {
                         conversation: messages,
                       });
                       const res = await fetch("/api/interview/report", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ messages, interviewDetails }),
+                        body: JSON.stringify({ messages, interviewDetails, faceMeshFeedback: feed }),
                       });
                       if (!res.ok) throw new Error("Failed to generate report");
                       const data = await res.json();

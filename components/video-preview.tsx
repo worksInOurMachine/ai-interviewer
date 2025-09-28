@@ -143,7 +143,7 @@ export default function EmotionAnalyzerPage({ startFn, stopFn }: any) {
     const earStd =
       Math.sqrt(
         earHistoryRef.current.reduce((s, x) => s + (x - earMean) ** 2, 0) /
-          earHistoryRef.current.length
+        earHistoryRef.current.length
       ) || 0.0001;
     const eyeWideFeature = Math.min(
       Math.max((ear - earMean) / (2 * earStd), 0),
@@ -190,9 +190,9 @@ export default function EmotionAnalyzerPage({ startFn, stopFn }: any) {
       Math.min(
         Math.max(
           0.4 * headDown +
-            0.3 * Math.max(-mouthDown / faceHeight, 0) +
-            0.2 * (1 - browFeature) +
-            0.1 * marFeature,
+          0.3 * Math.max(-mouthDown / faceHeight, 0) +
+          0.2 * (1 - browFeature) +
+          0.1 * marFeature,
           0
         ),
         1
@@ -209,9 +209,9 @@ export default function EmotionAnalyzerPage({ startFn, stopFn }: any) {
       Math.min(
         1,
         0.5 * blinkFeature +
-          0.3 * gazeAversion +
-          0.2 * marFeature +
-          0.2 * (1 - happyRaw) // Increase nervousness if happy is low
+        0.3 * gazeAversion +
+        0.2 * marFeature +
+        0.2 * (1 - happyRaw) // Increase nervousness if happy is low
         //   0.2 * (1 - finalConf)       // Increase nervousness if confidence is low
       )
     );
@@ -322,7 +322,6 @@ export default function EmotionAnalyzerPage({ startFn, stopFn }: any) {
         ? "Try to reduce excessive blinking, it may indicate nervousness."
         : ""
     );
-
     return feedback.join("\n");
   };
 
@@ -332,14 +331,15 @@ export default function EmotionAnalyzerPage({ startFn, stopFn }: any) {
       const stream = videoRef.current?.srcObject as MediaStream | null;
       stream?.getTracks().forEach((t) => t.stop());
       if (videoRef.current) videoRef.current.srcObject = null;
-    } catch {}
+    } catch { }
     setRunning(false);
 
     // Show feedback
     const feedback = generateFeedback();
     alert(`Session Feedback:\n\n${feedback}`);
     // Optionally, console.log for dev
-    console.log("Session Data:", sessionDataRef.current);
+     
+    return feedback
   };
 
   // ------------------- UI & Scripts -------------------
