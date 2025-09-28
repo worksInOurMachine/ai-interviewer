@@ -94,7 +94,7 @@ export default function ReportsPage() {
         open={!!selectedReport}
         onOpenChange={() => setSelectedReport(null)}
       >
-        <DialogContent className="w-[90vw] max-w-5xl max-h-[90vh] overflow-y-auto p-6">
+        <DialogContent className="w-[90vw] h-[90vh] max-w-[95vw] max-h-[95vh] overflow-y-auto p-6">
           <DialogHeader>
             <DialogTitle>Interview Report</DialogTitle>
           </DialogHeader>
@@ -112,6 +112,7 @@ export default function ReportsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
     </main>
   );
 }
