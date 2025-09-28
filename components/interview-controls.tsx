@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef } from "react";
 import AISpeakingBars from "./ai-speaking-bars";
 import MicVisualizer from "./mic-visualizer";
 import SegmentedToggle from "./segmented-toggle";
@@ -12,7 +12,6 @@ export default function InterviewControls({
   mode,
   listening,
   text,
-  // setAiSpeaking,
   setMode,
   setListening,
   setText,
@@ -22,7 +21,6 @@ export default function InterviewControls({
   mode: "voice" | "text";
   listening: boolean;
   text: string;
-  // setAiSpeaking: (speaking: boolean) => void;
   setMode: (mode: "voice" | "text") => void;
   setListening: (listening: boolean | ((prev: boolean) => boolean)) => void;
   setText: (text: string) => void;
@@ -30,7 +28,6 @@ export default function InterviewControls({
 }) {
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
-  // Init speech recognition only once
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -38,10 +35,7 @@ export default function InterviewControls({
       (window as any).SpeechRecognition ||
       (window as any).webkitSpeechRecognition;
 
-    if (!SpeechRecognition) {
-      console.warn("Speech Recognition not supported in this browser.");
-      return;
-    }
+    if (!SpeechRecognition) return;
 
     const recognition = new SpeechRecognition();
     recognition.lang = "en-US";
@@ -64,16 +58,11 @@ export default function InterviewControls({
     recognitionRef.current = recognition;
   }, [setText, setListening]);
 
-  // Start / Stop mic listening
   useEffect(() => {
     const recognition = recognitionRef.current;
     if (!recognition) return;
 
-    if (listening) {
-      recognition.start();
-    } else {
-      recognition.stop();
-    }
+    listening ? recognition.start() : recognition.stop();
   }, [listening]);
 
   useEffect(() => {
@@ -82,19 +71,19 @@ export default function InterviewControls({
   }, [aiSpeaking, setListening]);
 
   return (
-    <div className="w-full">
+    <div className="w-full p-2">
       {aiSpeaking ? (
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3 p-3">
-            <div className="h-8 w-8 rounded-full bg-muted" aria-hidden />
-            <div className="text-sm text-muted-foreground">
+        <div className="flex items-center justify-between gap-2 px-3 py-2 rounded-md bg-muted">
+          <div className="flex items-center gap-2">
+            <div className="h-6 w-6 rounded-full bg-muted-foreground" />
+            <span className="text-sm text-muted-foreground">
               AI is responding...
-            </div>
+            </span>
           </div>
           <AISpeakingBars />
         </div>
       ) : (
-        <div className="p-4">
+        <div className="space-y-2">
           <SegmentedToggle
             value={mode}
             onChange={(v) => setMode(v as "voice" | "text")}
@@ -102,25 +91,24 @@ export default function InterviewControls({
               { label: "Voice", value: "voice" },
               { label: "Text", value: "text" },
             ]}
+            className="w-full"
           />
 
           {/* Voice */}
           {mode === "voice" && (
-            <div className="mt-4 flex flex-col items-center gap-4">
+            <div className="flex flex-col items-center gap-2">
               <MicVisualizer active={listening} />
               <motion.div
-                initial={{ opacity: 0, y: 6 }}
+                initial={{ opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-sm text-muted-foreground"
+                className="text-xs text-muted-foreground"
               >
-                {listening
-                  ? "Listening... speak your answer"
-                  : "Tap mic to start speaking"}
+                {listening ? "Listening..." : "Tap mic to speak"}
               </motion.div>
-              <div className="flex items-center gap-3">
+              <div className="flex gap-2">
                 <button
                   onClick={() => setListening((s) => !s)}
-                  className="rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground shadow hover:opacity-90"
+                  className="flex-1 rounded-md bg-primary px-2 py-1 text-xs font-medium text-primary-foreground shadow hover:opacity-90"
                 >
                   {listening ? "Stop" : "Start"} Mic
                 </button>
@@ -129,11 +117,11 @@ export default function InterviewControls({
                     onClick={() => {
                       setListening(false);
                       handleSend(text.trim());
-                      setText(""); // clear after send
+                      setText("");
                     }}
-                    className="rounded-md border border-border bg-background px-3 py-2 text-sm font-medium hover:bg-muted"
+                    className="flex-1 rounded-md border border-border bg-background px-2 py-1 text-xs font-medium hover:bg-muted"
                   >
-                    Send Answer
+                    Send
                   </button>
                 )}
               </div>
@@ -142,7 +130,7 @@ export default function InterviewControls({
 
           {/* Text */}
           {mode === "text" && (
-            <div className="mt-4 flex items-center gap-2">
+            <div className="flex gap-2">
               <Input
                 placeholder="Type your answer..."
                 value={text}
@@ -153,6 +141,7 @@ export default function InterviewControls({
                     setText("");
                   }
                 }}
+                className="flex-1 text-sm"
               />
               <button
                 onClick={() => {
@@ -161,7 +150,7 @@ export default function InterviewControls({
                     setText("");
                   }
                 }}
-                className="rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground shadow hover:opacity-90"
+                className="rounded-md bg-primary px-2 py-1 text-sm font-semibold text-primary-foreground shadow hover:opacity-90"
               >
                 Send
               </button>
