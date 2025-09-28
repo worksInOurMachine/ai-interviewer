@@ -55,6 +55,7 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
   });
 
   const interviewData: any = data?.data;
+
   const interviewDetails = {
     topic: interviewData?.[0]?.details || "",
     difficulty: interviewData?.[0]?.difficulty || "medium",
@@ -62,7 +63,7 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
     numOfQuestions: interviewData?.[0]?.numberOfQuestions,
     skills: interviewData?.[0]?.skills || "",
   };
-  const resumeUrl = `${interviewData?.[0]?.resume[0]?.url}`;
+  const resumeUrl = `${interviewData?.[0]?.resume}`;
 
   // Initial greeting
   const initialGreetings = async () => {
@@ -93,10 +94,10 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
   }
 
   return (
-    <main className="grid min-h-[80vh] grid-rows-[auto_1fr] relative">
+    <main className="grid  min-h-[80vh] grid-rows-[auto_1fr] relative">
       {/* Start Modal */}
       {showStartModal && (
-        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black text-white">
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center backdrop-blur-2xl text-white">
           <h1 className="text-4xl font-bold animate-pulse mb-4">
             Start Interview
           </h1>
@@ -105,6 +106,8 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
           </Button>
         </div>
       )}
+
+      <div className="h-10" aria-hidden />
 
       <header className="border-b">
         <div className="container mx-auto flex items-center justify-between px-4 py-3">

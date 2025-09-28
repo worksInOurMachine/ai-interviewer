@@ -63,7 +63,7 @@ const Navbar = () => {
   return (
     <nav
       aria-label="Main navigation"
-      className="fixed left-1/2 top-4 z-50 w-full max-w-5xl -translate-x-1/2 px-4 font-[Inter]"
+      className="fixed left-1/2 top-4 z-50 w-full  max-w-5xl -translate-x-1/2 px-4 font-[Inter]"
     >
       <div className="flex items-center justify-between rounded-xl border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900/80 px-4 py-2 shadow-xl backdrop-blur-md sm:px-6 sm:py-3 transition-colors duration-300">
         {/* Logo */}

@@ -20,15 +20,15 @@ function Page() {
   const [questions, setQuestions] = React.useState("10");
   const router = useRouter();
   const { data } = useSession<any>();
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   //console.log(data);
 
   const handleSubmitFinal = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
       if (!skills || !topic) {
-        return toast.error("please provide skills and job role")
+        return toast.error("please provide skills and job role");
       }
       const finalData = {
         resume: resume || null,
@@ -43,18 +43,16 @@ function Page() {
 
       const formData = new FormData();
 
-      formData.append("files", resume);
+      formData.append("image", resume);
 
-      const fileId = await strapi.axios.post("/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      const fileId = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
       });
-
-      console.log("File ID:", fileId.data[0].id);
+      const fileUrl = (await fileId.json()).result || null;
 
       const res = await strapi.create("interviews", {
-        resume: fileId.data[0].id,
+        resume: fileUrl,
         mode: mode,
         difficulty: difficulty,
         skills: skills,
@@ -67,9 +65,9 @@ function Page() {
       router.push(`/interview/${res.data.documentId}`);
     } catch (error) {
       console.log(error);
-      toast.error("Something went wrong")
+      toast.error("Something went wrong");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -82,17 +80,16 @@ function Page() {
 
   return (
     <>
-      {
-        loading ? <div className="flex justify-center flex-col gap-8 items-center w-full h-[80vh]">
-
-          <div style={{ width: '25%', height: '150px' }}  >
+      {loading ? (
+        <div className="flex justify-center flex-col gap-8 items-center w-full h-[80vh]">
+          {/* <div style={{ width: "25%", height: "150px" }}>
             <Orb
               hoverIntensity={0.5}
               rotateOnHover={true}
               hue={0}
               forceHoverState={false}
             />
-          </div>
+          </div> */}
           <TrueFocus
             sentence="Generating Interview"
             manualMode={false}
@@ -100,9 +97,12 @@ function Page() {
             borderColor="blue"
             animationDuration={2}
             pauseBetweenAnimations={1}
-            
           />
-        </div> : <>
+        </div>
+      ) : (
+        <>
+          <div className="h-10" aria-hidden />
+
           <Stepper
             initialStep={1}
             onStepChange={(step) => {
@@ -120,9 +120,9 @@ function Page() {
                   Welcome to the Interview Stepper! 👋
                 </h2>
                 <p className="text-gray-500 leading-relaxed">
-                  We'll guide you through setting up your personalized AI interview.
-                  This process ensures the AI tailors the questions to your exact
-                  needs, skills, and career focus.
+                  We'll guide you through setting up your personalized AI
+                  interview. This process ensures the AI tailors the questions
+                  to your exact needs, skills, and career focus.
                 </p>
               </div>
             </Step>
@@ -135,7 +135,9 @@ function Page() {
                 </h2>
 
                 <div className="mb-6">
-                  <label className={LabelClasses}>Upload Resume (Optional)</label>
+                  <label className={LabelClasses}>
+                    Upload Resume (Optional)
+                  </label>
                   <input
                     type="file"
                     // Removed redundant ': any' type annotation
@@ -186,7 +188,9 @@ function Page() {
                   Step 3: Focus Area 🎯
                 </h2>
                 <div className="mb-6">
-                  <label className={LabelClasses}>Key Skills (Comma separated)</label>
+                  <label className={LabelClasses}>
+                    Key Skills (Comma separated)
+                  </label>
                   <input
                     type="text"
                     value={skills}
@@ -265,16 +269,15 @@ function Page() {
                   Final Step: Ready to Practice! 🎉
                 </h2>
                 <p className="text-gray-300 leading-relaxed mb-5">
-                  You've set up your interview profile. Review the details below and
-                  click **Complete** to begin your mock interview.
+                  You've set up your interview profile. Review the details below
+                  and click **Complete** to begin your mock interview.
                 </p>
               </div>
             </Step>
           </Stepper>
         </>
-      }
+      )}
     </>
-
   );
 }
 
