@@ -62,6 +62,14 @@ export default function InterviewChatPane({
             </div>
           </div>
         ))}
+        {isSpeechLoading && (
+          <div className="flex">
+            <div className="max-w-[80%] rounded-lg border bg-muted px-3 py-2 text-sm">
+              <span className="animate-pulse">AI is thinking</span>
+              <span className="animate-pulse">...</span>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

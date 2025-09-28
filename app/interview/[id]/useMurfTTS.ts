@@ -187,6 +187,7 @@ export function useMurfTTS(options?: UseMurfTTSOptions) {
     unlockPlayback, // call this from a button click if you want explicit control
     isLoading,
     isPlaying,
+    setIsLoading,
     error,
     userInteracted,
   };

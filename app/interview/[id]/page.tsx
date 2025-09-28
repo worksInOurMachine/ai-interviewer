@@ -36,6 +36,7 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
     stop,
     unlockPlayback,
     isPlaying,
+    setIsLoading: setIsSpeechLoading,
     isLoading: isSpeechLoading,
     error: speechError,
   } = useMurfTTS({ voiceId: "en-US-natalie" });
@@ -129,7 +130,7 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
             <Card className="flex-1 overflow-hidden">
               <InterviewChatPane
                 messages={messages}
-                isSpeechLoading={isSpeechLoading}
+                isSpeechLoading={isSpeechLoading || aiSpeaking}
                 setMessages={setMessages}
               />
             </Card>
@@ -146,6 +147,7 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
                   setText={setText}
                   handleSend={async (c) => {
                     await sendMessage({ content: c, interviewDetails });
+                    setIsSpeechLoading(true);
                     setText("");
                   }}
                 />

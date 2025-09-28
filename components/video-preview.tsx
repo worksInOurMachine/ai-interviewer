@@ -431,7 +431,7 @@ export default function EmotionAnalyzerPage({ startFn, stopFn }: any) {
       </div>
       <div className=" bg-secondary border-r overflow-scroll no-scrollbar w-full p-4">
         {/*  <h1 className="text-2xl font-bold mb-4">Emotion Analysis Dashboard</h1> */}
-        <div className="flex gap-2 mb-4">
+        {/* <div className="flex gap-2 mb-4">
           <button
             className={`px-4 py-2 rounded-md shadow cursor-pointer text-white ${
               running ? "bg-red-500" : "bg-green-600"
@@ -446,7 +446,7 @@ export default function EmotionAnalyzerPage({ startFn, stopFn }: any) {
           >
             Reset
           </button>
-        </div>
+        </div> */}
         <MetricsPanel
           blinkRate={blinkRate}
           confidence={confidence}
