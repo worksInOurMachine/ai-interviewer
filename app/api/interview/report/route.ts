@@ -1,10 +1,10 @@
 export async function POST(req: Request) {
   try {
-    const { messages, interviewDetails } = await req.json();
+    const { messages, interviewDetails, faceMeshFeedback } = await req.json();
 
     const model = "mistral";
 
-   const systemPrompt = `
+    const systemPrompt = `
 You are an expert AI recruiter. Generate a **full HTML interview report** inside a Markdown string, ready to render in ReactMarkdown + rehypeRaw.  
 
 Instructions:
@@ -29,10 +29,16 @@ Structure:
     <h2 style="color:#34495e;">Candidate Information</h2>
     <ul>
       <li><strong>Job Role:</strong> ${interviewDetails?.topic || "N/A"}</li>
-      <li><strong>Difficulty:</strong> ${interviewDetails?.difficulty || "N/A"}</li>
+      <li><strong>Difficulty:</strong> ${
+        interviewDetails?.difficulty || "N/A"
+      }</li>
       <li><strong>Mode:</strong> ${interviewDetails?.mode || "N/A"}</li>
-      <li><strong>Number of Questions:</strong> ${interviewDetails?.numOfQuestions || "N/A"}</li>
-      <li><strong>Skills Assessed:</strong> ${interviewDetails?.skills || "N/A"}</li>
+      <li><strong>Number of Questions:</strong> ${
+        interviewDetails?.numOfQuestions || "N/A"
+      }</li>
+      <li><strong>Skills Assessed:</strong> ${
+        interviewDetails?.skills || "N/A"
+      }</li>
     </ul>
   </section>
 
@@ -63,7 +69,6 @@ Requirements:
 4. Include **visual cues** (colors, spacing, borders) for clarity and emphasis.
 `;
 
-
     const API_URI = "https://text.pollinations.ai/openai";
     const response = await fetch(API_URI, {
       method: "POST",
@@ -75,14 +80,21 @@ Requirements:
         model,
         messages: [
           { role: "system", content: systemPrompt },
-          { role: "user", content: JSON.stringify(messages) + "" },
+          {
+            role: "user",
+            content:
+              JSON.stringify(messages) +
+              `facial analytics = ${JSON.stringify(faceMeshFeedback)}` +
+              "",
+          },
         ],
       }),
     });
 
     const data = await response.json();
     const report =
-      data?.choices?.[0]?.message?.content || "# Interview Report\n\n_No report generated._";
+      data?.choices?.[0]?.message?.content ||
+      "# Interview Report\n\n_No report generated._";
 
     return new Response(JSON.stringify({ report }), {
       status: 200,
@@ -90,8 +102,11 @@ Requirements:
     });
   } catch (error) {
     console.error("Report generation error:", error);
-    return new Response(JSON.stringify({ error: "Failed to generate report" }), {
-      status: 500,
-    });
+    return new Response(
+      JSON.stringify({ error: "Failed to generate report" }),
+      {
+        status: 500,
+      }
+    );
   }
 }
