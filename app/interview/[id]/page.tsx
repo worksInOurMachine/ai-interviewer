@@ -27,7 +27,6 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
   const [startAnalyticts, setStartAnalyticts] = useState<any>(null);
   const [stopAnalyticts, setStopAnalyticts] = useState<any>(null);
 
-
   const [showStartModal, setShowStartModal] = useState(true); // show modal initially
 
   const router = useRouter();
@@ -63,15 +62,21 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
     mode: interviewData?.[0]?.mode || "text",
     numOfQuestions: interviewData?.[0]?.numberOfQuestions,
     skills: interviewData?.[0]?.skills || "",
+    username: interviewData?.[0]?.candidateName || "",
   };
-  const resumeUrl = `${interviewData?.[0]?.resume}`;
+  const resumeUrl = interviewData?.[0]?.resume || "";
 
   // Initial greeting
   const initialGreetings = async () => {
     try {
       const content = [
-        { type: "image_url", image_url: { url: resumeUrl } },
-        { type: "text", text: "" },
+        ...(resumeUrl && { type: "image_url", image_url: { url: resumeUrl } }),
+        {
+          type: "text",
+          text: interviewDetails.username
+            ? "Hello I am " + interviewDetails.username
+            : "",
+        },
       ];
       await sendMessage({ content, interviewDetails });
     } catch (error) {
@@ -125,7 +130,6 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
             <VideoPreview
               startFn={setStartAnalyticts}
               stopFn={setStopAnalyticts}
-
             />
           </Card>
         </section>
@@ -162,7 +166,7 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
                   onClick={async () => {
                     setIsGeneratingReport(true);
                     try {
-                      let feed = ""
+                      let feed = "";
                       if (stopAnalyticts) {
                         feed = stopAnalyticts();
                       }
@@ -172,7 +176,11 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
                       const res = await fetch("/api/interview/report", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ messages, interviewDetails, faceMeshFeedback: feed }),
+                        body: JSON.stringify({
+                          messages,
+                          interviewDetails,
+                          faceMeshFeedback: feed,
+                        }),
                       });
                       if (!res.ok) throw new Error("Failed to generate report");
                       const data = await res.json();
