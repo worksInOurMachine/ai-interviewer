@@ -76,7 +76,7 @@ const Navbar = () => {
             <div className="w-2 h-2 rounded-full bg-white/100 opacity-60"></div>
             <div className="w-2 h-2 rounded-full bg-white/100 opacity-30"></div>
           </div>
-          <span className="text-lg font-bold">NeuraView AI</span>
+          <span className="text-lg font-bold">NeuraView.AI</span>
         </Link>
 
         {/* Main Links */}
@@ -100,6 +100,12 @@ const Navbar = () => {
                 className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
               >
                 Roadmap/Chat
+              </Link>
+              <Link
+                href="/dashboard"
+                className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+              >
+                Dashboard
               </Link>
               <Link
                 href="/reports"

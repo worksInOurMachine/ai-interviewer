@@ -34,7 +34,7 @@ function Page() {
         resume: resume || null,
         mode,
         difficulty,
-        skills,
+        skills: skills.split(" ").join(","),
         topic,
         questions,
       };
