@@ -109,7 +109,7 @@ const Navbar = () => {
 
         {/* Auth + Theme */}
         <div className="flex items-center gap-2 sm:gap-3">
-          <ThemeToggle />
+          {/* <ThemeToggle /> */}
           {session?.user?.id ? (
             <Link
               href="/create-interview"
