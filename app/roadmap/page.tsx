@@ -1,10 +1,10 @@
 "use client";
 
-import Roadmap from '@/components/roadmap';
-import RoadmapForm from '@/components/roadmap-form';
-import { Button } from '@/components/ui/button';
-import { useState } from 'react';
-
+import Roadmap from "@/components/roadmap";
+import RoadmapForm from "@/components/roadmap-form";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { jsPDF } from "jspdf";
 
 const page = () => {
   const [loading, setLoading] = useState(false);
@@ -15,7 +15,7 @@ const page = () => {
     jobRole: "",
     skills: "",
     duration: 6,
-  })
+  });
 
   const getRoadmap = async () => {
     try {
@@ -29,7 +29,6 @@ const page = () => {
             jobRole: formData.jobRole,
             skills: formData.skills,
             duration: formData.duration,
-
           },
         }),
       });
@@ -40,7 +39,7 @@ const page = () => {
         .trim();
 
       // Convert to object
-      console.log(JSON.parse(cleaned));
+      // console.log(JSON.parse(cleaned));
       setRoadmap(JSON.parse(cleaned));
     } catch (error) {
       setError(error);
@@ -48,24 +47,142 @@ const page = () => {
     } finally {
       setLoading(false);
     }
-  }
+  };
+  const handleDownload = () => {
+    const doc = new jsPDF();
+    let y = 15;
+    const pageHeight = doc.internal.pageSize.height;
+
+    const addText = (text: string, indent = 0, lineHeight = 7) => {
+      const lines = doc.splitTextToSize(text, 180 - indent);
+
+      lines.forEach((line: string) => {
+        if (y > pageHeight - 15) {
+          doc.addPage();
+          y = 15;
+        }
+        doc.text(line, 10 + indent, y);
+        y += lineHeight;
+      });
+    };
+
+    // Title
+    addText(`Title: ${roadmap.title}`, 0, 10);
+    y += 5;
+
+    // 1. Overview
+    addText("1. Job Role Overview:", 0, 10);
+    addText(roadmap["1. Job Role Overview"], 10);
+    y += 5;
+
+    // 2. Skills Breakdown
+    addText("2. Skills Breakdown:", 0, 10);
+    Object.entries(roadmap["2. Skills Breakdown"]).forEach(([key, val]) => {
+      addText(`• ${key}:`, 10); //@ts-ignore
+      addText(val, 20); //@ts-ignore
+      y += 3;
+    });
+    y += 5;
+
+    // 3. Month-by-Month Roadmap
+    addText("3. Month-by-Month Roadmap:", 0, 10);
+    Object.entries(roadmap["3. Month-by-Month Roadmap"])?.forEach(
+      ([month, section]) => {
+        addText(`${month}:`, 10); //@ts-ignore
+
+        addText("Topics:", 20); //@ts-ignore
+        section?.Topics?.forEach((t) => addText(`- ${t}`, 30));
+
+        addText("Resources:", 20); //@ts-ignore
+        section?.Resources?.forEach((r) => addText(`- ${r}`, 30));
+
+        addText("Tasks:", 20); //@ts-ignore
+        section?.Tasks?.forEach((t) => addText(`- ${t}`, 30));
+
+        y += 5;
+      }
+    );
+
+    // ✅ 4. Learning Resources
+    addText("4. Learning Resources:", 0, 10);
+
+    addText("Books:", 10);
+    roadmap["4. Learning Resources"]?.Books?.forEach((b: string) =>
+      addText(`- ${b}`, 20)
+    );
+
+    addText("Online Courses:", 10);
+    roadmap["4. Learning Resources"]?.["Online Courses"]?.forEach((c: string) =>
+      addText(`- ${c}`, 20)
+    );
+
+    addText("Documentation:", 10);
+    roadmap["4. Learning Resources"]?.Documentation?.forEach((d: string) =>
+      addText(`- ${d}`, 20)
+    );
+
+    addText("YouTube Tutorials:", 10);
+    roadmap["4. Learning Resources"]?.Youtube?.forEach((yt: string) =>
+      addText(`- ${yt}`, 20)
+    );
+
+    y += 5;
+
+    // ✅ 5. Capstone Project
+    addText("5. Capstone Project:", 0, 10);
+    addText(`Idea: ${roadmap["5. Capstone Project"]?.Idea}`, 10);
+
+    addText("Features:", 10);
+    roadmap["5. Capstone Project"]?.Features?.forEach((f: string) =>
+      addText(`- ${f}`, 20)
+    );
+
+    addText("Technologies:", 10);
+    roadmap["5. Capstone Project"]?.Tech?.forEach((t: string) =>
+      addText(`- ${t}`, 20)
+    );
+
+    y += 5;
+
+    // ✅ 6. Extra Tips
+    addText("6. Extra Tips:", 0, 10);
+    Object.entries(roadmap["6. Extra Tips"])?.forEach(([k, v]) => {
+      addText(`${k}:`, 10);
+      //@ts-ignore
+      addText(v, 20);
+      y += 3;
+    });
+
+    doc.save("roadmap.pdf");
+  };
+
   return (
-    <div className='flex flex-col items-center justify-center min-h-screen'>
+    <div className="flex flex-col items-center justify-center min-h-screen">
       {!generateRoadmap ? (
         <>
-          <RoadmapForm formData={formData} setFormData={setFormData} getRoadmap={getRoadmap} />
-
+          <RoadmapForm
+            formData={formData}
+            setFormData={setFormData}
+            getRoadmap={getRoadmap}
+          />
         </>
       ) : (
         <div>
           {generateRoadmap && loading && <div>Loading...</div>}
           {error && <div>Error: {error}</div>}
-          {roadmap && <Roadmap  data={roadmap} />}
+
+          {roadmap && <Roadmap data={roadmap} />}
+          {roadmap && (
+            <div className=" justify-center items-center flex w-full m-5">
+              <Button className=" cursor-pointer" onClick={handleDownload}>
+                Download
+              </Button>
+            </div>
+          )}
         </div>
       )}
-
     </div>
-  )
-}
+  );
+};
 
-export default page 
+export default page;
