@@ -12,8 +12,8 @@ const page = () => {
   const [error, setError] = useState<any>(null);
   const [generateRoadmap, setGenerateRoadmap] = useState(false);
   const [formData, setFormData] = useState({
-    jobRole: "Software Engineer",
-    skills: "React, Next.js, Tailwind CSS, TypeScript, Node.js, MongoDB",
+    jobRole: "",
+    skills: "",
     duration: 6,
   })
 
@@ -34,9 +34,14 @@ const page = () => {
         }),
       });
       const data = await res.json();
-      console.log({ roadmap: JSON.stringify(data, null, 2) });
-      console.log(data?.roadmap);
-      setRoadmap(data?.roadmap);
+      const cleaned = data.roadmap
+        .replace(/```json/g, "")
+        .replace(/```/g, "")
+        .trim();
+
+      // Convert to object
+      console.log(JSON.parse(cleaned));
+      setRoadmap(JSON.parse(cleaned));
     } catch (error) {
       setError(error);
       setGenerateRoadmap(false);
@@ -48,14 +53,14 @@ const page = () => {
     <div className='flex flex-col items-center justify-center min-h-screen'>
       {!generateRoadmap ? (
         <>
-        <RoadmapForm formData={formData} setFormData={setFormData} getRoadmap={getRoadmap} />
-        
+          <RoadmapForm formData={formData} setFormData={setFormData} getRoadmap={getRoadmap} />
+
         </>
       ) : (
         <div>
           {generateRoadmap && loading && <div>Loading...</div>}
           {error && <div>Error: {error}</div>}
-     {/*      {roadmap && <Roadmap data={roadmap} />} */}
+          {roadmap && <Roadmap  data={roadmap} />}
         </div>
       )}
 
@@ -63,4 +68,4 @@ const page = () => {
   )
 }
 
-export default page
+export default page 
