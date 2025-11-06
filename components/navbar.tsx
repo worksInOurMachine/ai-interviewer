@@ -1,6 +1,6 @@
 "use client";
 import { Moon, Sun } from "lucide-react";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
 
@@ -63,20 +63,20 @@ const Navbar = () => {
   return (
     <nav
       aria-label="Main navigation"
-      className="fixed left-1/2 top-4 z-50 w-full  max-w-5xl -translate-x-1/2 px-4"
+      className="fixed left-1/2 top-4 z-50 w-full  max-w-5xl -translate-x-1/2 px-4 font-sans"
     >
-      <div className="flex items-center justify-between rounded-xl border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900/80 px-4 py-2 shadow-xl backdrop-blur-md sm:px-6 sm:py-3 transition-colors duration-300">
+      <div className="flex items-center justify-between rounded-xl border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900/80 px-4 py-2 shadow-xl backdrop-blur-sm sm:px-6 sm:py-3 transition-colors duration-300">
         {/* Logo */}
         <Link
           href="/"
-          className="flex items-center gap-2 text-gray-900 dark:text-white"
+          className="flex items-center gap-2 text-gray-900  dark:text-white"
         >
           <div className="flex items-center gap-1">
             <div className="w-2 h-2 rounded-full bg-white/100"></div>
             <div className="w-2 h-2 rounded-full bg-white/100 opacity-60"></div>
             <div className="w-2 h-2 rounded-full bg-white/100 opacity-30"></div>
           </div>
-          <span className="text-sm font-bold">AI Interviewer</span>
+          <span className="text-lg font-bold">NeuraView.AI</span>
         </Link>
 
         {/* Main Links */}
@@ -87,36 +87,56 @@ const Navbar = () => {
           >
             Home
           </Link>
-          <Link
+          {/* <Link
             href="/#models"
             className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
           >
             Modes
-          </Link>
-          <Link
-            href="/roadmap-chat"
-            className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-          >
-            Roadmap/Chat
-          </Link>
-          <Link
-            href="/reports"
-            className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-          >
-            Reports
-          </Link>
+          </Link> */}
+          {session?.user?.id && (
+            <>
+              <Link
+                href="/roadmap-chat"
+                className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+              >
+                Roadmap/Chat
+              </Link>
+              <Link
+                href="/dashboard"
+                className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+              >
+                Dashboard
+              </Link>
+              <Link
+                href="/reports"
+                className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+              >
+                Reports
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Auth + Theme */}
         <div className="flex items-center gap-2 sm:gap-3">
-          <ThemeToggle />
+          {/* <ThemeToggle /> */}
           {session?.user?.id ? (
-            <Link
-              href="/create-interview"
-              className="rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-800 dark:text-white border border-gray-300 dark:border-gray-700 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 sm:px-4 sm:py-2"
-            >
-              Start Interview
-            </Link>
+            <>
+              <Link
+                href="/create-interview"
+                className="rounded-lg px-3 py-1.5 bg-green-700 text-xs font-semibold text-gray-800 dark:text-white border border-gray-300 dark:border-gray-700 transition-colors dark:hover:bg-green-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 sm:px-4 sm:py-2"
+              >
+                Start Interview
+              </Link>
+
+              <Link
+                href=""
+                onClick={() => signOut({ callbackUrl: "/" })}
+                className="rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-800 dark:text-white border border-gray-300 dark:border-gray-700 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 sm:px-4 sm:py-2"
+              >
+                Log Out
+              </Link>
+            </>
           ) : (
             <>
               <Link
