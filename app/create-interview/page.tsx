@@ -11,7 +11,7 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 
 function Page() {
-  const [name, setName] = React.useState("");
+  const [candidateName, setCandidateName] = React.useState("");
   const [resume, setResume] = React.useState<any>(null); // File object
   const [mode, setMode] = React.useState("Technical");
   const [difficulty, setDifficulty] = React.useState("medium");
@@ -39,7 +39,27 @@ function Page() {
         questions,
       };
 
-      console.log("Final Submission Data:", finalData);
+      if (!candidateName) {
+        return toast.error("Please provide candidate name");
+      }
+      if (!data || !data.user) {
+        return toast.error("You must be logged in to create an interview");
+      }
+      if (!mode) {
+        return toast.error("Please select interview mode");
+      }
+      if (!difficulty) {
+        return toast.error("Please select interview difficulty");
+      }
+      if (!skills) {
+        return toast.error("Please provide at least one skill");
+      }
+      if (!topic) {
+        return toast.error("Please provide job role");
+      }
+      if (!questions) {
+        return toast.error("Please select number of questions");
+      }
 
       const formData = new FormData();
 
@@ -59,6 +79,7 @@ function Page() {
         details: topic,
         numberOfQuestions: parseInt(questions),
         user: data && data.user.id,
+        candidateName: candidateName || "",
       });
       console.log("Interview Created:", res);
       toast.success("interview Created SuccessFully");
@@ -133,6 +154,18 @@ function Page() {
                 <h2 className="text-2xl font-bold text-indigo-700 mb-6">
                   Step 2: Core Setup 🛠️
                 </h2>
+
+                <div className="mb-6">
+                  <label className={LabelClasses}>Candidate Name</label>
+                  <input
+                    type="text"
+                    value={candidateName}
+                    onChange={(e) => setCandidateName(e.target.value)}
+                    placeholder="Name of the Candidate"
+                    required
+                    className={InputClasses}
+                  />
+                </div>
 
                 <div className="mb-6">
                   <label className={LabelClasses}>

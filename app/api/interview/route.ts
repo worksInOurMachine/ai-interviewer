@@ -6,7 +6,7 @@ export async function POST(req: Request) {
       interviewDetails,
     } = await req.json();
 
-    const model = "mistral";
+    const model = "openai-fast";
 
     console.log("Interview Details:", interviewDetails);
 
