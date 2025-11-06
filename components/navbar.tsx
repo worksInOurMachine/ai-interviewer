@@ -94,10 +94,16 @@ const Navbar = () => {
             Modes
           </Link>
           <Link
-            href="/create-interview"
+            href="/roadmap-chat"
             className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
           >
-            Practice
+            Roadmap/Chat
+          </Link>
+          <Link
+            href="/reports"
+            className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+          >
+            Reports
           </Link>
         </div>
 
@@ -109,7 +115,7 @@ const Navbar = () => {
               href="/create-interview"
               className="rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-800 dark:text-white border border-gray-300 dark:border-gray-700 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 sm:px-4 sm:py-2"
             >
-              Start
+              Start Interview
             </Link>
           ) : (
             <>
