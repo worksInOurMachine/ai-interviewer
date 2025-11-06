@@ -212,7 +212,7 @@ Your role is to simulate a real human interviewer—friendly, natural, but struc
       },
     });
   } catch (error) {
-    console.error("API Error:", error);
+    console.log("API Error:", error);
     return Response.json(
       { error: "Ohh there's something wrong, try again!" },
       { status: 500 }
