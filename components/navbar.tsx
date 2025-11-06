@@ -65,11 +65,11 @@ const Navbar = () => {
       aria-label="Main navigation"
       className="fixed left-1/2 top-4 z-50 w-full  max-w-5xl -translate-x-1/2 px-4"
     >
-      <div className="flex items-center justify-between rounded-xl border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900/80 px-4 py-2 shadow-xl backdrop-blur-md sm:px-6 sm:py-3 transition-colors duration-300">
+      <div className="flex items-center justify-between rounded-xl border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900/80 px-4 py-2 shadow-xl backdrop-blur-sm sm:px-6 sm:py-3 transition-colors duration-300">
         {/* Logo */}
         <Link
           href="/"
-          className="flex items-center gap-2 text-gray-900 dark:text-white"
+          className="flex items-center gap-2 text-gray-900  dark:text-white"
         >
           <div className="flex items-center gap-1">
             <div className="w-2 h-2 rounded-full bg-white/100"></div>
@@ -100,7 +100,9 @@ const Navbar = () => {
             >
               Practice
             </Link>
-          ) : null}
+          ) : (
+            ""
+          )}
         </div>
 
         {/* Auth + Theme */}
