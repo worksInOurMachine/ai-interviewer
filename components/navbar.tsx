@@ -1,6 +1,6 @@
 "use client";
 import { Moon, Sun } from "lucide-react";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
 
@@ -93,30 +93,44 @@ const Navbar = () => {
           >
             Modes
           </Link>
-          <Link
-            href="/roadmap-chat"
-            className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-          >
-            Roadmap/Chat
-          </Link>
-          <Link
-            href="/reports"
-            className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-          >
-            Reports
-          </Link>
+          {session?.user?.id && (
+            <>
+              <Link
+                href="/roadmap-chat"
+                className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+              >
+                Roadmap/Chat
+              </Link>
+              <Link
+                href="/reports"
+                className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+              >
+                Reports
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Auth + Theme */}
         <div className="flex items-center gap-2 sm:gap-3">
           {/* <ThemeToggle /> */}
           {session?.user?.id ? (
-            <Link
-              href="/create-interview"
-              className="rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-800 dark:text-white border border-gray-300 dark:border-gray-700 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 sm:px-4 sm:py-2"
-            >
-              Start Interview
-            </Link>
+            <>
+              <Link
+                href="/create-interview"
+                className="rounded-lg px-3 py-1.5 bg-green-700 text-xs font-semibold text-gray-800 dark:text-white border border-gray-300 dark:border-gray-700 transition-colors dark:hover:bg-green-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 sm:px-4 sm:py-2"
+              >
+                Start Interview
+              </Link>
+
+              <Link
+                href=""
+                onClick={() => signOut({ callbackUrl: "/" })}
+                className="rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-800 dark:text-white border border-gray-300 dark:border-gray-700 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 sm:px-4 sm:py-2"
+              >
+                Log Out
+              </Link>
+            </>
           ) : (
             <>
               <Link
