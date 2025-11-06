@@ -69,18 +69,20 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
   // Initial greeting
   const initialGreetings = async () => {
     try {
-      const content = [
-        ...(resumeUrl && { type: "image_url", image_url: { url: resumeUrl } }),
-        {
-          type: "text",
-          text: interviewDetails.username
-            ? "Hello I am " + interviewDetails.username
-            : "",
-        },
-      ];
+      
+   const content = [
+  ...(resumeUrl ? [{ type: "image_url", image_url: { url: resumeUrl } }] : []),
+  {
+    type: "text",
+    text: interviewDetails.username
+      ? "Hello I am " + interviewDetails.username
+      : "",
+  },
+];
+
       await sendMessage({ content, interviewDetails });
     } catch (error) {
-      console.error("Initial greeting failed", error);
+      console.log("Initial greeting failed", error);
     }
   };
 
