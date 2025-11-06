@@ -10,6 +10,7 @@ export default function Roadmap({ data }: { data: any }) {
 }
 
 const s = {
+  "title":"Job title",
   "1. Job Role Overview":
     "A Java Developer specializes in designing, implementing, and maintaining Java-based applications, primarily focusing on backend development with skills in frameworks like Spring Boot and frontend integration with technologies like React.js.",
   "2. Skills Breakdown": {

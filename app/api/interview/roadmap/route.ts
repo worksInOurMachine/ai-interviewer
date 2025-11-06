@@ -29,6 +29,7 @@ The final output must be valid JSON and must be treated as the file content of "
 ✅ JSON STRUCTURE YOU MUST ALWAYS FOLLOW:
 
 {
+"title":"Job title",
   "1. Job Role Overview": "job role overview",
 
   "2. Skills Breakdown": {

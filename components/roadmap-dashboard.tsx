@@ -35,7 +35,7 @@ export default function RoadmapDashboard({ data }: { data: RoadmapData }) {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-balance mb-4">Roadmap</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-balance mb-4">{data["title"]}</h1>
           <p className="text-lg text-muted-foreground">{data["1. Job Role Overview"]}</p>
         </div>
 
