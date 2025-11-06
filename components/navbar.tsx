@@ -63,7 +63,7 @@ const Navbar = () => {
   return (
     <nav
       aria-label="Main navigation"
-      className="fixed left-1/2 top-4 z-50 w-full  max-w-5xl -translate-x-1/2 px-4 font-[Inter]"
+      className="fixed left-1/2 top-4 z-50 w-full  max-w-5xl -translate-x-1/2 px-4"
     >
       <div className="flex items-center justify-between rounded-xl border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900/80 px-4 py-2 shadow-xl backdrop-blur-md sm:px-6 sm:py-3 transition-colors duration-300">
         {/* Logo */}
@@ -93,25 +93,20 @@ const Navbar = () => {
           >
             Modes
           </Link>
-          <Link
-            href="/create-interview"
-            className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-          >
-            Practice
-          </Link>
+          {session?.user?.id ? (
+            <Link
+              href="/create-interview"
+              className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+            >
+              Practice
+            </Link>
+          ) : null}
         </div>
 
         {/* Auth + Theme */}
         <div className="flex items-center gap-2 sm:gap-3">
-          <ThemeToggle />
-          {session?.user?.id ? (
-            <Link
-              href="/create-interview"
-              className="rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-800 dark:text-white border border-gray-300 dark:border-gray-700 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 sm:px-4 sm:py-2"
-            >
-              Start
-            </Link>
-          ) : (
+          {/* <ThemeToggle /> */}
+          {!session?.user?.id && (
             <>
               <Link
                 href="/auth/login"
