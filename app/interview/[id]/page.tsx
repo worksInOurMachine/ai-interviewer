@@ -186,11 +186,12 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
                         }),
                       });
                       if (!res.ok) throw new Error("Failed to generate report");
-                      const data = await res.json();
-                      const report = data?.report;
+
+                      const report = await res.json();
+                      // const report = data?.report;
                       if (report) {
                         await strapi.update("interviews", params.id, {
-                          report,
+                          report: JSON.stringify(report),
                         });
                       }
                       toast.success("Report generated!");
