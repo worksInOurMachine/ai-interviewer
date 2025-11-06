@@ -87,12 +87,12 @@ const Navbar = () => {
           >
             Home
           </Link>
-          <Link
+          {/* <Link
             href="/#models"
             className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
           >
             Modes
-          </Link>
+          </Link> */}
           {session?.user?.id && (
             <>
               <Link

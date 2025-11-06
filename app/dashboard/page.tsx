@@ -54,7 +54,7 @@ export default function DashboardPage() {
   const { overview, charts, recentReports } = dashboard;
 
   return (
-    <main className="min-h-screen pt-[100px] bg-gradient-to-b from-[#0f172a] to-[#1e293b] text-white px-4 sm:px-6 lg:px-10 py-10">
+    <main className="min-h-screen pt-[100px] text-white px-4 sm:px-6 lg:px-10 py-10">
       {/* Title */}
       <motion.h1
         initial={{ opacity: 0, y: -10 }}

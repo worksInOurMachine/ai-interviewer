@@ -42,7 +42,7 @@ export default function ReportsPage() {
     );
 
   return (
-    <main className="min-h-screen  bg-gradient-to-b from-[#0f172a] to-[#1e293b] text-gray-200 p-6 sm:p-10">
+    <main className="min-h-screen  text-gray-200 p-6 sm:p-10">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
