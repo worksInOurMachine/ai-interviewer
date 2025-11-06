@@ -63,7 +63,7 @@ const Navbar = () => {
   return (
     <nav
       aria-label="Main navigation"
-      className="fixed left-1/2 top-4 z-50 w-full  max-w-5xl -translate-x-1/2 px-4"
+      className="fixed left-1/2 top-4 z-50 w-full  max-w-5xl -translate-x-1/2 px-4 font-sans"
     >
       <div className="flex items-center justify-between rounded-xl border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900/80 px-4 py-2 shadow-xl backdrop-blur-sm sm:px-6 sm:py-3 transition-colors duration-300">
         {/* Logo */}
@@ -76,7 +76,7 @@ const Navbar = () => {
             <div className="w-2 h-2 rounded-full bg-white/100 opacity-60"></div>
             <div className="w-2 h-2 rounded-full bg-white/100 opacity-30"></div>
           </div>
-          <span className="text-sm font-bold">AI Interviewer</span>
+          <span className="text-lg font-bold">NeuraView AI</span>
         </Link>
 
         {/* Main Links */}
