@@ -40,6 +40,7 @@ export default function EmotionAnalyzerPage({ startFn, stopFn }: any) {
     mar: 0,
     ear: 0,
     blink: 0,
+    nose: 0,
   });
 
   // **Session recording**
@@ -133,7 +134,7 @@ export default function EmotionAnalyzerPage({ startFn, stopFn }: any) {
 
     const blinkFeature = Math.min(blinkTimestampsRef.current.length / 30, 1);
     const marFeature = Math.min(mar / 0.45, 1);
-    const gazeAversion = Math.min(Math.abs(pose.yaw) / 0.25, 1);
+    const gazeAversion = Math.min(Math.abs(pose.yaw) / 0.15, 1);
     const headDown = Math.min(Math.max(pose.pitch / 0.15, -1), 1);
 
     // Surprise
@@ -143,7 +144,7 @@ export default function EmotionAnalyzerPage({ startFn, stopFn }: any) {
     const earStd =
       Math.sqrt(
         earHistoryRef.current.reduce((s, x) => s + (x - earMean) ** 2, 0) /
-        earHistoryRef.current.length
+          earHistoryRef.current.length
       ) || 0.0001;
     const eyeWideFeature = Math.min(
       Math.max((ear - earMean) / (2 * earStd), 0),
@@ -190,9 +191,9 @@ export default function EmotionAnalyzerPage({ startFn, stopFn }: any) {
       Math.min(
         Math.max(
           0.4 * headDown +
-          0.3 * Math.max(-mouthDown / faceHeight, 0) +
-          0.2 * (1 - browFeature) +
-          0.1 * marFeature,
+            0.3 * Math.max(-mouthDown / faceHeight, 0) +
+            0.2 * (1 - browFeature) +
+            0.1 * marFeature,
           0
         ),
         1
@@ -209,9 +210,9 @@ export default function EmotionAnalyzerPage({ startFn, stopFn }: any) {
       Math.min(
         1,
         0.5 * blinkFeature +
-        0.3 * gazeAversion +
-        0.2 * marFeature +
-        0.2 * (1 - happyRaw) // Increase nervousness if happy is low
+          0.3 * gazeAversion +
+          0.2 * marFeature +
+          0.2 * (1 - happyRaw) // Increase nervousness if happy is low
         //   0.2 * (1 - finalConf)       // Increase nervousness if confidence is low
       )
     );
@@ -219,20 +220,65 @@ export default function EmotionAnalyzerPage({ startFn, stopFn }: any) {
 
     // Confidence
     const gazeFeature = 1 - gazeAversion;
-    const stabilityFeature = Math.min(1, 0.5 / (earStd + 0.0001));
-    const speakingPenalty = marFeature;
+    const nose = lm[1];
+    const lastNose = lastEmotionRef.current.nose || nose;
+
+    const headJitter =
+      Math.hypot(nose.x - lastNose.x, nose.y - lastNose.y) * 50;
+    lastEmotionRef.current.nose = nose;
+
+    const jitterFeature = Math.min(1, headJitter);
+    const stabilityFeature = 1 - jitterFeature;
+
+    //const stabilityFeature = Math.min(1, 0.5 / (earStd + 0.0001));
+    const lastMar = lastEmotionRef.current.mar || mar;
+    const speakingJitter = Math.min(1, Math.abs(mar - lastMar) * 4);
+    const speakingPenalty = (marFeature + speakingJitter) / 2;
     const surprisePenalty = finalSurprise * (1 - smile);
+    const eyeSmile = (browFeature + eyeWideFeature) / 2;
+    const fakeSmilePenalty = Math.max(smile - eyeSmile, 0);
+
+    const gazeStability =
+      Math.min(1, 1 - Math.abs(pose.yaw) * 2) *
+      Math.min(1, 1 - Math.abs(pose.pitch) * 2);
+
     const pos =
       0.35 * smile +
       0.25 * gazeFeature +
+      0.2 * gazeStability + // NEW
       0.15 * (1 - headDown) +
       0.25 * stabilityFeature;
+    const nervousPenalty = Math.pow(nervousRaw, 1.3); // nonlinear: spikes matter more
+
+    const keyPoints = [1, 33, 133, 362, 263, 61, 291]; // nose, eyes, mouth points
+    let visibleCount = 0;
+
+    keyPoints.forEach((i) => {
+      const p = lm[i];
+      if (p.x > 0 && p.x < 1 && p.y > 0 && p.y < 1) visibleCount++;
+    });
+
+    const visibilityScore = visibleCount / keyPoints.length;
+    const hidingPenalty = 1 - visibilityScore;
+
     const neg =
-      0.6 * nervousRaw + 0.25 * speakingPenalty + 0.15 * surprisePenalty;
+      0.6 * nervousRaw +
+      0.25 * speakingPenalty +
+      0.15 * surprisePenalty +
+      0.4 * hidingPenalty + // NEW: big impact if hiding
+      0.4 * gazeAversion; // NEW: turning face away hurts confidence
     const rawConf = Math.max(-1, Math.min(1, pos - neg));
-    const logistic = 1 / (1 + Math.exp(-2 * rawConf));
-    const finalConf = smooth(lastEmotionRef.current.confidence, logistic);
+    const logistic = 1 / (1 + Math.exp(-3 * rawConf));
+    let finalConf = smooth(lastEmotionRef.current.confidence, logistic, 0.2);
+    if (visibilityScore < 0.4) {
+      finalConf *= visibilityScore; // force drop
+    }
+
     setConfidence(Number(finalConf.toFixed(2)));
+    if (!results.multiFaceLandmarks || !results.multiFaceLandmarks[0]) {
+      setConfidence((prev) => Math.max(prev * 0.5, 0.1)); // drop confidence fast
+      return;
+    }
 
     lastEmotionRef.current = {
       happy: happyRaw,
@@ -243,6 +289,7 @@ export default function EmotionAnalyzerPage({ startFn, stopFn }: any) {
       mar,
       ear,
       blink: br,
+      nose,
     };
 
     // ------------------- Record session -------------------
@@ -293,7 +340,7 @@ export default function EmotionAnalyzerPage({ startFn, stopFn }: any) {
     feedback.push(`Blink Rate: ${blink.toFixed(1)} blinks/min`); */
 
     feedback.push(
-      conf < 0.7
+      conf < 0.8
         ? "Try to maintain eye contact and speak confidently, need to improve confidence."
         : "Good job maintaining confidence."
     );
@@ -331,15 +378,15 @@ export default function EmotionAnalyzerPage({ startFn, stopFn }: any) {
       const stream = videoRef.current?.srcObject as MediaStream | null;
       stream?.getTracks().forEach((t) => t.stop());
       if (videoRef.current) videoRef.current.srcObject = null;
-    } catch { }
+    } catch {}
     setRunning(false);
 
     // Show feedback
     const feedback = generateFeedback();
-   // alert(`Session Feedback:\n\n${feedback}`);
+ //    alert(`Session Feedback:\n\n${feedback}`);
     // Optionally, console.log for dev
-     
-    return feedback
+
+    return feedback;
   };
 
   // ------------------- UI & Scripts -------------------
@@ -406,6 +453,7 @@ export default function EmotionAnalyzerPage({ startFn, stopFn }: any) {
       mar: 0,
       ear: 0,
       blink: 0,
+      nose: 0,
     };
     sessionDataRef.current = [];
     setBlinkRate(0);
