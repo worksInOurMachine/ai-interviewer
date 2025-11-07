@@ -40,7 +40,7 @@ export default async function RootLayout({
         <Script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" />
 
         {/* Orb Background */}
-        <div className="absolute inset-0 z-[-1]">
+        <div className=" fixed inset-0 z-[-1]">
           <LightRays
             raysOrigin="top-center"
             raysColor="#00ffff"
