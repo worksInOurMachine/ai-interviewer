@@ -53,7 +53,7 @@ export default function SignupFormDemo() {
   };
   return (
     <div className="flex justify-center items-center h-screen">
-      <div className="shadow-input mt-10 mx-auto w-full max-w-md rounded-none bg-white p-4 md:rounded-2xl md:p-8 dark:bg-black">
+      <div className="shadow-input mt-10 mx-auto w-full max-w-md rounded-none bg-trabsparent p-4 md:rounded-2xl md:p-8 backdrop-blur-3xl">
         <h2 className="text-xl font-bold text-neutral-800 dark:text-neutral-200">
           Welcome to AI Interviewer!
         </h2>
