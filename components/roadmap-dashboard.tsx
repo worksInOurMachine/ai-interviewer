@@ -6,12 +6,15 @@ import SkillsOverview from "./skills-overview"
 import MonthCard from "./month-card"
 import ResourcesSection from "./resources-section"
 import CapstoneSection from "./capstone-section"
+import { Button } from "./ui/button"
+import { useRouter } from "next/navigation"
 
 interface RoadmapData {
   [key: string]: any
 }
 
-export default function RoadmapDashboard({ data }: { data: RoadmapData }) {
+export default function RoadmapDashboard({ data, handleDownload, handleGenerateNew }: { data: RoadmapData, handleDownload: () => void, handleGenerateNew: () => void }) {
+  const router = useRouter();
   const [selectedMonth, setSelectedMonth] = useState(1)
 
   const monthRoadmap = data["3. Month-by-Month Roadmap"] || {}
@@ -35,7 +38,21 @@ export default function RoadmapDashboard({ data }: { data: RoadmapData }) {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-balance mb-4">{data["title"]}</h1>
+         <div className=" flex justify-between items-center">
+           <h1 className="text-4xl md:text-5xl font-bold text-balance mb-4">{data["title"]}</h1>
+           <div className=" flex gap-2">
+                 <Button className=" cursor-pointer" onClick={handleDownload}>
+                Download
+              </Button>
+              <Button className=" cursor-pointer" onClick={()=>router.push("/chat")}>
+                Chat
+              </Button>
+                  <Button className=" cursor-pointer" onClick={()=>{
+               handleGenerateNew()}}>
+                Generate New
+              </Button>
+           </div>
+         </div>
           <p className="text-lg text-muted-foreground">{data["1. Job Role Overview"]}</p>
         </div>
 

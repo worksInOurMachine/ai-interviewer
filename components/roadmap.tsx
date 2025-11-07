@@ -1,10 +1,10 @@
 "use client";
 import RoadmapDashboard from "./roadmap-dashboard";
  
-export default function Roadmap({ data }: { data: any }) {
+export default function Roadmap({ data, handleDownload, handleGenerateNew }: { data: any ,handleDownload: () => void, handleGenerateNew: () => void}) {
   return (
     <div className="min-h-screen mt-20 bg-card h-full text-foreground dark">
-      <RoadmapDashboard data={data} />
+      <RoadmapDashboard data={data} handleDownload={handleDownload} handleGenerateNew={handleGenerateNew} />
     </div>
   );
 }

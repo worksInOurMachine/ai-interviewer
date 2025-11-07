@@ -160,7 +160,16 @@ const page = () => {
 
     doc.save("roadmap.pdf");
   };
-
+const handleGenerateNew = () => {
+  setGenerateRoadmap(false);
+  setRoadmap(null);
+  setError(null);
+  setFormData({
+    jobRole: "",
+    skills: "",
+    duration: 6,
+  });
+};
   useEffect(()=>{
     const roadmap = window.localStorage.getItem("roadmap");
     if (roadmap) {
@@ -203,29 +212,8 @@ const page = () => {
             </div>}
           {error && <div>Error: {error}</div>}
 
-          {roadmap && <Roadmap data={roadmap} />}
-          {roadmap && (
-            <div className=" justify-center gap-5 items-center flex w-full m-5">
-              <Button className=" cursor-pointer" onClick={handleDownload}>
-                Download
-              </Button>
-              <Button className=" cursor-pointer" onClick={()=>{
-                setGenerateRoadmap(false);
-                setRoadmap(null);
-                setError(null);
-                setFormData({
-                  jobRole: "",
-                  skills: "",
-                  duration: 6,
-                });
-              }}>
-                Generate New
-              </Button>
-               <Button className=" cursor-pointer" onClick={()=>router.push("/chat")}>
-                Chat
-              </Button>
-            </div>
-          )}
+          {roadmap && <Roadmap data={roadmap} handleDownload={handleDownload} handleGenerateNew={handleGenerateNew} />}
+        
         </div>
       )}
     </div>
