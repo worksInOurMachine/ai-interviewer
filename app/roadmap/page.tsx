@@ -3,14 +3,17 @@
 import Roadmap from "@/components/roadmap";
 import RoadmapForm from "@/components/roadmap-form";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { jsPDF } from "jspdf";
+import TrueFocus from "@/components/TrueFocus";
+import { useRouter } from "next/navigation";
 
 const page = () => {
   const [loading, setLoading] = useState(false);
   const [roadmap, setRoadmap] = useState<any>(null);
   const [error, setError] = useState<any>(null);
   const [generateRoadmap, setGenerateRoadmap] = useState(false);
+  const router = useRouter();
   const [formData, setFormData] = useState({
     jobRole: "",
     skills: "",
@@ -41,6 +44,8 @@ const page = () => {
       // Convert to object
       // console.log(JSON.parse(cleaned));
       setRoadmap(JSON.parse(cleaned));
+      window.localStorage.setItem("roadmap", cleaned);
+
     } catch (error) {
       setError(error);
       setGenerateRoadmap(false);
@@ -156,6 +161,14 @@ const page = () => {
     doc.save("roadmap.pdf");
   };
 
+  useEffect(()=>{
+    const roadmap = window.localStorage.getItem("roadmap");
+    if (roadmap) {
+      setRoadmap(JSON.parse(roadmap));
+      setGenerateRoadmap(true);
+    }
+  },[])
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
       {!generateRoadmap ? (
@@ -168,14 +181,48 @@ const page = () => {
         </>
       ) : (
         <div>
-          {generateRoadmap && loading && <div>Loading...</div>}
+          {generateRoadmap && loading && <div>
+               <div className="flex justify-center flex-col gap-8 items-center w-full h-[80vh]">
+                      {/* <div style={{ width: "25%", height: "150px" }}>
+                        <Orb
+                          hoverIntensity={0.5}
+                          rotateOnHover={true}
+                          hue={0}
+                          forceHoverState={false}
+                        />
+                      </div> */}
+                      <TrueFocus
+                        sentence="Generating Roadmap"
+                        manualMode={false}
+                        blurAmount={5}
+                        borderColor="blue"
+                        animationDuration={2}
+                        pauseBetweenAnimations={1}
+                      />
+                    </div>
+            </div>}
           {error && <div>Error: {error}</div>}
 
           {roadmap && <Roadmap data={roadmap} />}
           {roadmap && (
-            <div className=" justify-center items-center flex w-full m-5">
+            <div className=" justify-center gap-5 items-center flex w-full m-5">
               <Button className=" cursor-pointer" onClick={handleDownload}>
                 Download
+              </Button>
+              <Button className=" cursor-pointer" onClick={()=>{
+                setGenerateRoadmap(false);
+                setRoadmap(null);
+                setError(null);
+                setFormData({
+                  jobRole: "",
+                  skills: "",
+                  duration: 6,
+                });
+              }}>
+                Generate New
+              </Button>
+               <Button className=" cursor-pointer" onClick={()=>router.push("/chat")}>
+                Chat
               </Button>
             </div>
           )}
