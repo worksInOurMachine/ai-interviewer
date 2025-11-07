@@ -383,7 +383,7 @@ export default function EmotionAnalyzerPage({ startFn, stopFn }: any) {
 
     // Show feedback
     const feedback = generateFeedback();
-     alert(`Session Feedback:\n\n${feedback}`);
+ //    alert(`Session Feedback:\n\n${feedback}`);
     // Optionally, console.log for dev
 
     return feedback;
