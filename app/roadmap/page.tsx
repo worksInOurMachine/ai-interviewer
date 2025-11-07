@@ -180,7 +180,7 @@ const page = () => {
           />
         </>
       ) : (
-        <div>
+        <div className="mt-10">
           {generateRoadmap && loading && <div>
                <div className="flex justify-center flex-col gap-8 items-center w-full h-[80vh]">
                       {/* <div style={{ width: "25%", height: "150px" }}>

@@ -3,7 +3,7 @@ import RoadmapDashboard from "./roadmap-dashboard";
  
 export default function Roadmap({ data }: { data: any }) {
   return (
-    <div className="min-h-screen mt-20 bg-background text-foreground dark">
+    <div className="min-h-screen mt-20 bg-card h-full text-foreground dark">
       <RoadmapDashboard data={data} />
     </div>
   );

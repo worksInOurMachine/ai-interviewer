@@ -31,7 +31,7 @@ export default function RoadmapDashboard({ data }: { data: RoadmapData }) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-card p-4 md:p-8">
+    <div className="min-h-screen bg-transparent h-full p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-12">
