@@ -4,7 +4,7 @@ import SpotlightCard from "@/components/ui/soptlight-card";
 import Link from "next/link";
 import React from "react";
 import { useState } from "react";
-import { MapPin, MessageSquare, ArrowRight } from "lucide-react";
+import { MapPin, MessageSquare, ArrowRight, Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 const roadmap = window.localStorage.getItem("roadmap");
@@ -13,6 +13,16 @@ const page = () => {
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
 
   const cards = [
+    {
+      id: "interview",
+      title: "Create Interview",
+      description:
+        "Generate AI-powered mock interviews to practice and improve your skills",
+      icon: Eye,
+      gradient: "from-green-500 to-green-700",
+      hoverGradient: "from-green-700 to-green-800",
+      href: "/create-interview",
+    },
     {
       id: "roadmap",
       title: "Roadmap",
@@ -36,7 +46,7 @@ const page = () => {
 
   return (
     <main className="min-h-screen bg-transparent flex items-center justify-center p-4">
-      <div className="w-full mt-10 max-w-2xl">
+      <div className="w-full mt-10 max-w-[80vw]">
         {/* Header */}
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 text-balance">
@@ -48,7 +58,7 @@ const page = () => {
         </div>
 
         {/* Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
           {cards.map((card) => {
             const Icon = card.icon;
             const isHovered = hoveredCard === card.id;
@@ -60,7 +70,9 @@ const page = () => {
                 onMouseLeave={() => setHoveredCard(null)}
                 className="group relative cursor-pointer"
                 onClick={() => {
-                  card.id == "chat" ? router.push(card.href) : "";
+                  card.id == "chat" || card.id == "interview"
+                    ? router.push(card.href)
+                    : "";
                 }}
               >
                 <div
@@ -120,7 +132,7 @@ const page = () => {
                     >
                       {card.id == "chat" ? (
                         <span>Learn More</span>
-                      ) : (
+                      ) : card.id == "roadmap" ? (
                         <div className="flex gap-2 ">
                           {roadmap ? (
                             <Button
@@ -142,6 +154,13 @@ const page = () => {
                             Generate New
                           </Button>
                         </div>
+                      ) : (
+                        <>
+                          <span>Get Started</span>
+                          <ArrowRight
+                            className={`w-4 h-4 transition-transform duration-300 group-hover/cta:translate-x-2`}
+                          />
+                        </>
                       )}
 
                       {card.id == "chat" ? (

@@ -99,7 +99,7 @@ const Navbar = () => {
                 href="/roadmap-chat"
                 className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
               >
-                Roadmap/Chat
+               Our Services
               </Link>
               <Link
                 href="/dashboard"
