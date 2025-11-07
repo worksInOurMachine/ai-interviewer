@@ -15,7 +15,7 @@ const page = () => {
     {
       id: "roadmap",
       title: "Roadmap",
-      description: "View our product roadmap and upcoming features",
+      description: "Generate Learning Roadmap for your next Job preparation",
       icon: MapPin,
       gradient: "from-blue-500 to-cyan-500",
       hoverGradient: "from-blue-600 to-cyan-600",
@@ -24,7 +24,7 @@ const page = () => {
     {
       id: "chat",
       title: "Chat",
-      description: "Get instant support from our team",
+      description: "Chat with our AI to get Guidance and prepare for your next Interview",
       icon: MessageSquare,
       gradient: "from-purple-500 to-pink-500",
       hoverGradient: "from-purple-600 to-pink-600",
@@ -32,8 +32,8 @@ const page = () => {
     },
   ]
   return (
-      <main className="min-h-screen bg-transparent mt-20 flex items-center justify-center p-4">
-      <div className="w-full max-w-2xl">
+      <main className="min-h-screen bg-transparent flex items-center justify-center p-4">
+      <div className="w-full mt-10 max-w-2xl">
         {/* Header */}
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 text-balance">Explore Our Services</h1>
